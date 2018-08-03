@@ -1,0 +1,22 @@
+node_modules/
+*.npm-debug.log
+.vscode/
+
+#buildfiles
+dist/bundle.js
+errors.json
+# Local development
+*.env
+*.dev
+.DS_Store
+stats.json
+*.woff
+*.woff2
+*.eot
+*.ttf
+*.svg
+*.old
+queries.json
+# Docker
+Dockerfile
+docker-compose.yml
