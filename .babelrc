@@ -3,5 +3,7 @@
     "plugins": [
       "transform-class-properties",
       "transform-react-constant-elements"
-    ]
+    ],
+    "sourceMap": "inline",
+    "retainLines": true
   }
