@@ -2,16 +2,20 @@ import 'babel-polyfill'
 import express from 'express'
 import Cache from 'memory-cache'
 import mongoose from 'mongoose'
-import {body,param,validationResult } from 'express-validator/check'
+import {body, param, validationResult} from 'express-validator/check'
 import logger from '../logger'
 
 const PersonalLibraryController = express.Router()
 
 // #region library model
+/* eslint-disable */
 const PersonalLibraryModel =
   process.env.NODE_ENV !== 'production'
     ? require('../models/PersonalLibrary.model').default
     : require('./PersonalLibrary.model').default
+const contentLibrary = mongoose.model('personalcontent')
+
+/* eslint-enable */
 // #endregion
 
 // #region middleware
@@ -29,7 +33,7 @@ PersonalLibraryController.use((req, res, next) => {
 // #endregion
 
 PersonalLibraryController.route('/pcache').get(async (req, res) => {
-  const itemscache = Cache.keys()
+  const itemscache = Cache.keys().filter(item => item.startsWith('personal_'))
   return res.status(200).json({data: itemscache.map(item => Cache.get(item))})
 })
 // #region no params
@@ -37,16 +41,13 @@ PersonalLibraryController.route('/')
   .get(async (req, res) => {
     try {
       if (Cache.size() === 0) {
-        // model
-        const contentLibrary = mongoose.model('personalcontent')
-        //
         // get data from db
         const datacontent = await contentLibrary.find({})
 
-        /* eslint no-underscore-dangle:  */
+        /* eslint-disable  */
         datacontent.map(item =>
           Cache.put(
-            item._id,
+            `personal_${item._id}`,
             {
               id: item._id,
               title: item.title,
@@ -64,8 +65,11 @@ PersonalLibraryController.route('/')
             }
           })
         })
+        /* eslint-enable  */
       }
-      const cacheKeys = Cache.keys()
+      const cacheKeys = Cache.keys().filter(item =>
+        item.startsWith('personal_')
+      )
       return res
         .status(200)
         .json({data: cacheKeys.map(item => Cache.get(item))})
@@ -74,19 +78,13 @@ PersonalLibraryController.route('/')
       return res.status(500).json({message: 'Something really bad happened'})
     }
   })
-  .post([
-    body('title').exists()
-  ],async (req, res) => {
-    
+  .post([body('title').exists()], async (req, res) => {
     try {
-      const errors = validationResult(req);
+      const errors = validationResult(req)
       if (!errors.isEmpty()) {
-        return res.status(422).json({ errors: errors.array() });
+        return res.status(422).json({errors: errors.array()})
       }
-          
-      // model
-      const contentLibrary = mongoose.model('personalcontent')
-      //
+
       // get data from db
       const datacontent = await contentLibrary.findOne({title: req.body.title})
 
@@ -100,9 +98,9 @@ PersonalLibraryController.route('/')
         created: new Date(),
         comments: []
       })
-
+      /* eslint-disable  */
       Cache.put(
-        newBook._id,
+        `personal_${newBook._id}`,
         {
           id: newBook._id,
           title: newBook.title,
@@ -110,9 +108,8 @@ PersonalLibraryController.route('/')
         },
         18000000
       )
-
-      /* eslint no-underscore-dangle:  */
       return res.status(201).json({id: newBook._id, title: req.body.title})
+      /* eslint-enable  */
     } catch (error) {
       logger.info(`PersonalLibraryController error: ${error}`)
       return res.status(500).json({message: 'Something really bad happened'})
@@ -123,9 +120,7 @@ PersonalLibraryController.route('/')
       if (Cache.size) {
         Cache.clear()
       }
-      // model
-      const contentLibrary = mongoose.model('personalcontent')
-      //
+
       // get data from db
       await contentLibrary.remove({})
       return res.status(200).json({message: 'complete delete successful'})
@@ -140,145 +135,160 @@ PersonalLibraryController.route('/')
 
 // #region params request
 PersonalLibraryController.route('/:bookid')
-  .get([
-    param('bookid').exists().isMongoId()
-  ],async (req, res) => {
-    
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(422).json({ errors: errors.array() });
-      }
-      const dataincache = Cache.get(req.params.bookid)
-
-      if (dataincache) {
-        return res.status(200).json({
-          book: {
-            id: req.params.bookid,
-            title: dataincache.title,
-            comments: dataincache.comments
-          }
-        })
-      }
-      
-      // model
-      const contentLibrary = mongoose.model('personalcontent')
-      //
-      // get data from db
-      const datacontent = await contentLibrary.findById(req.params.bookid)
-      if (datacontent) {
-        Cache.put(
-          datacontent._id,
-          {
-            title: datacontent.title,
-            comments: datacontent.comments
-          },
-          18000000
-        )
-        return res.status(200).json({
-          book: {
-            id: req.params.bookid,
-            title: datacontent.title,
-            comments: datacontent.comments ? datacontent.comments : []
-          }
-        })
-      }
-      return res
-        .status(500)
-        .json({message: `No book present with id: ${req.params.bookid}`})
-    } catch (error) {
-      logger.info(`PersonalLibraryController get book with id error: ${error}`)
-      return res.status(500).json({message: 'Something really bad happened'})
-    }
-  })
-  .post([
-    param('bookid').exists().isMongoId(),
-    body('comment').exists()
-  ],async (req, res) => {
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(422).json({ errors: errors.array() });
-      }
-      const dataincache = Cache.get(req.params.bookid)
-
-      // model
-      const contentLibrary = mongoose.model('personalcontent')
-      //
-      const datastored = await contentLibrary.findByIdAndUpdate(
-        req.params.bookid,
-        {
-          $push: {
-            comments: {
-              commentText: req.body.comment
-            }
-          }
-        },
-        {safe: true, new: true}
-      )
-
-      if (datastored) {
-        if (dataincache) {
-          /* const newComments= [...dataincache.comments,{comment: req.body.comment, dateadded: new Date()}]
-          dataincache.comments=newComments; */
-          Cache.del(req.params.bookid)
+  .get(
+    [
+      param('bookid')
+        .exists()
+        .isMongoId()
+    ],
+    async (req, res) => {
+      try {
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+          return res.status(422).json({errors: errors.array()})
         }
-        Cache.put(
+        const dataincache = Cache.get(`personal_${req.params.bookid}`)
+
+        if (dataincache) {
+          return res.status(200).json({
+            book: {
+              id: req.params.bookid,
+              title: dataincache.title,
+              comments: dataincache.comments
+            }
+          })
+        }
+
+        // get data from db
+        /* eslint-disable  */
+        const datacontent = await contentLibrary.findById(req.params.bookid)
+        if (datacontent) {
+          Cache.put(
+            `personal_${datacontent._id}`,
+            {
+              title: datacontent.title,
+              comments: datacontent.comments
+            },
+            18000000
+          )
+          /* eslint-enable  */
+          return res.status(200).json({
+            book: {
+              id: req.params.bookid,
+              title: datacontent.title,
+              comments: datacontent.comments ? datacontent.comments : []
+            }
+          })
+        }
+        return res
+          .status(500)
+          .json({message: `No book present with id: ${req.params.bookid}`})
+      } catch (error) {
+        logger.info(
+          `PersonalLibraryController get book with id error: ${error}`
+        )
+        return res.status(500).json({message: 'Something really bad happened'})
+      }
+    }
+  )
+  .post(
+    [
+      param('bookid')
+        .exists()
+        .isMongoId(),
+      body('comment').exists()
+    ],
+    async (req, res) => {
+      try {
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+          return res.status(422).json({errors: errors.array()})
+        }
+        const dataincache = Cache.get(`personal_${req.params.bookid}`)
+        const datastored = await contentLibrary.findByIdAndUpdate(
           req.params.bookid,
           {
-            title: datastored.title,
-            comments: datastored.comments.map(item => {
-              return {commentText: item.commentText, dateadded: item.dateadded}
-            })
+            $push: {
+              comments: {
+                commentText: req.body.comment
+              }
+            }
           },
-          18000000
+          {safe: true, new: true}
         )
-        // Cache.put(req.params.bookid,{title:})
-        return res.status(200).json({
-          book: {
-            id: req.params.bookid,
-            title: datastored.title,
-            comments: datastored.comments.map(item => {
-              return {commentText: item.commentText, dateadded: item.dateadded}
-            })
+
+        if (datastored) {
+          if (dataincache) {
+            /* const newComments= [...dataincache.comments,{comment: req.body.comment, dateadded: new Date()}]
+          dataincache.comments=newComments; */
+            Cache.del(`personal_${req.params.bookid}`)
           }
-        })
+          Cache.put(
+            `personal_${req.params.bookid}`,
+            {
+              title: datastored.title,
+              comments: datastored.comments.map(item => {
+                return {
+                  commentText: item.commentText,
+                  dateadded: item.dateadded
+                }
+              })
+            },
+            18000000
+          )
+
+          return res.status(200).json({
+            book: {
+              id: req.params.bookid,
+              title: datastored.title,
+              comments: datastored.comments.map(item => {
+                return {
+                  commentText: item.commentText,
+                  dateadded: item.dateadded
+                }
+              })
+            }
+          })
+        }
+        return res
+          .status(500)
+          .json({message: `No book present with id: ${req.params.bookid}`})
+      } catch (error) {
+        logger.info(
+          `PersonalLibraryController post comment book error: ${error}`
+        )
+        return res.status(500).json({message: 'Something really bad happened'})
       }
-      return res
-        .status(500)
-        .json({message: `No book present with id: ${req.params.bookid}`})
-    } catch (error) {
-      logger.info(`PersonalLibraryController post comment book error: ${error}`)
-      return res.status(500).json({message: 'Something really bad happened'})
     }
-  })
-  .delete([
-    param('bookid').exists().isMongoId(),
-  ],async (req, res) => {
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(422).json({ errors: errors.array() });
+  )
+  .delete(
+    [
+      param('bookid')
+        .exists()
+        .isMongoId()
+    ],
+    async (req, res) => {
+      try {
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+          return res.status(422).json({errors: errors.array()})
+        }
+        const cachedItem = Cache.get(`personal_${req.params.bookid}`)
+        if (cachedItem) {
+          Cache.del(`personal_${req.params.bookid}`)
+        }
+        const book = await contentLibrary.findByIdAndRemove(req.params.bookid)
+        if (book) {
+          return res.status(200).json({message: `book was removed`})
+        }
+        return res
+          .status(500)
+          .json({message: `no book was present for ${req.params.bookid}`})
+      } catch (error) {
+        logger.info(`PersonalLibraryController remove book error: ${error}`)
+        return res.status(500).json({message: 'Something really bad happened'})
       }
-      const cachedItem = Cache.get(req.params.bookid)
-      if (cachedItem) {
-        Cache.del(req.params.bookid)
-      }
-      
-      // model
-      const contentLibrary = mongoose.model('personalcontent')
-      //
-      const book = await contentLibrary.findByIdAndRemove(req.params.bookid)
-      if (book) {
-        return res.status(200).json({message: `book was removed`})
-      }
-      return res
-        .status(500)
-        .json({message: `no book was present for ${req.params.bookid}`})
-    } catch (error) {
-      logger.info(`PersonalLibraryController remove book error: ${error}`)
-      return res.status(500).json({message: 'Something really bad happened'})
     }
-  })
+  )
 // #endregion
 export default PersonalLibraryController

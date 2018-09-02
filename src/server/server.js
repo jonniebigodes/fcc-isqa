@@ -7,9 +7,13 @@ import mongoose from 'mongoose'
 import logger from './logger'
 import PriceCheckerController from './controllers/PriceChecker'
 import PersonalLibraryController from './controllers/PersonalLibrary'
+import IssueTrackerController from './controllers/IssueTracker'
+import ProjectIssueTrackerController from './controllers/IssueTrackerProject'
 import AnonBardsController from './controllers/MessageBoard'
 import BoardThreadsController from './controllers/MessageBoardThreads'
-import BoardRepliesController from './controllers/BoardReplies'
+import BoardRepliesController from './controllers/MessageBoardReplies'
+import SinglePriceCheckerController from './controllers/SinglePriceChecker'
+import MultiplePriceCheckerController from './controllers/MultiplePriceChecker'
 
 const app = express()
 
@@ -26,10 +30,20 @@ app.use(
         fontSrc: ["'self'"]
       }
     },
+    referrerPolicy: {
+      policy: 'same-origin'
+    },
     hidePoweredBy: {
       setTo: 'PHP 4.2.0'
     },
-    noCache: true
+    frameguard: {
+      action: 'sameorigin'
+    },
+    dnsPrefetchControl: true,
+    noCache: true,
+    xssFilter: {
+      setOnOldIE: true
+    }
   })
 )
 
@@ -37,16 +51,21 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(cors())
 
+/* eslint-disable */
 if (process.env.NODE_ENV !== 'production') {
   const config = require('dotenv').config()
 }
+/* eslint-enable */
 
 app.use('/api/books', PersonalLibraryController)
 app.use('/api/boards', AnonBardsController)
+app.use('/api/issues/projects', ProjectIssueTrackerController)
+app.use('/api/issues', IssueTrackerController)
 app.use('/api/threads', BoardThreadsController)
 app.use('/api/replies', BoardRepliesController)
+app.use('/api/stock-prices/single', SinglePriceCheckerController)
+app.use('/api/stock-prices/multiple', MultiplePriceCheckerController)
 app.use('/api/stock-prices', PriceCheckerController)
-
 mongoose
   .connect(
     process.env.NODE_ENV === 'production'
@@ -76,9 +95,9 @@ app.listen(app.get('port'), error => {
   }
 })
 
-process.on('SIGINT',()=>{
+process.on('SIGINT', () => {
   logger.info(`fcc-isqa is going down`)
-  mongoose.disconnect();
-  process.exit(0);
+  mongoose.disconnect()
+  process.exit(0)
 })
 export default app

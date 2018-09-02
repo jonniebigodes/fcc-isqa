@@ -1,37 +1,46 @@
 import chai from 'chai'
 import chaiHttp from 'chai-http'
 import mongoose from 'mongoose'
+import {before, it, describe, after} from 'mocha'
 import server from '../server'
-import PersonalLibraryModel from '../models/PersonalLibrary.model'
 
+/* eslint-disable */
+import PersonalLibraryModel from '../models/PersonalLibrary.model'
+/* eslint-enable */
 chai.use(chaiHttp)
 chai.should()
 let idbook = ''
 
-before(done=>{
-  console.log('====================================');
-  console.log('clearing library content');
-  console.log('====================================');
-  mongoose.connect(
-    'mongodb://localhost:27017/fcc_isqa',
-    {
-      autoIndex: false, // Don't build indexes
-      reconnectTries: 100, // Never stop trying to reconnect
-      reconnectInterval: 2000, // Reconnect every 2000ms
-      poolSize: 10, // Maintain up to 10 socket connections
-      // If not connected, return errors immediately rather than waiting for reconnect
-      bufferMaxEntries: 0,
-      bufferCommands: false
-    }
-  ).then(()=>{
-    const testcontentlibrary= mongoose.model('personalcontent');
-    testcontentlibrary.remove({}).then(()=>{
-      done()
+before(done => {
+  /* eslint-disable */
+  console.log('====================================')
+  console.log('clearing library content')
+  console.log('====================================')
+  /* eslint-enable */
+  mongoose
+    .connect(
+      'mongodb://localhost:27017/fcc_isqa',
+      {
+        autoIndex: false, // Don't build indexes
+        reconnectTries: 100, // Never stop trying to reconnect
+        reconnectInterval: 2000, // Reconnect every 2000ms
+        poolSize: 10, // Maintain up to 10 socket connections
+        // If not connected, return errors immediately rather than waiting for reconnect
+        bufferMaxEntries: 0,
+        bufferCommands: false
+      }
+    )
+    .then(() => {
+      const testcontentlibrary = mongoose.model('personalcontent')
+      testcontentlibrary
+        .remove({})
+        .then(() => {
+          done()
+        })
+        .catch(err => {
+          done(err)
+        })
     })
-    .catch(err=>{
-      done(err)
-    })
-  })
 })
 
 describe('/POST new book without title', () => {
@@ -44,13 +53,13 @@ describe('/POST new book without title', () => {
         if (err) {
           done(err)
         }
-        const expectedResult={
+        const expectedResult = {
           errors: [
-              {
-                  location: "body",
-                  param: "title",
-                  msg: "Invalid value"
-              }
+            {
+              location: 'body',
+              param: 'title',
+              msg: 'Invalid value'
+            }
           ]
         }
         res.should.have.status(422)
@@ -90,9 +99,11 @@ describe('/POST another new book', () => {
         }
         const {id} = res.body
         idbook = id
-        console.log('====================================');
-        console.log(`id=>${idbook}`);
-        console.log('====================================');
+        /* eslint-disable */
+        console.log('====================================')
+        console.log(`id=>${idbook}`)
+        console.log('====================================')
+        /* eslint-enable */
         res.should.have.status(201)
         res.body.should.have.property('title').eql('dummy2')
         res.body.should.have.property('id')
@@ -139,7 +150,7 @@ describe(`GET information about book dummy 2 with id=>${idbook}`, () => {
         done()
       })
   })
-}) 
+})
 describe('/GET list of books added', () => {
   it('should get a list of books stored', done => {
     chai
@@ -199,48 +210,49 @@ describe('/POST book comment to non existing book', () => {
         if (err) {
           done(err)
         }
-       
-        const expectedResult={
+
+        const expectedResult = {
           errors: [
             {
-                  location: "params",
-                  param: "bookid",
-                  value: "banana",
-                  msg: "Invalid value"
+              location: 'params',
+              param: 'bookid',
+              value: 'banana',
+              msg: 'Invalid value'
             }
           ]
         }
         res.should.have.status(422)
         res.body.should.include.keys('errors')
         res.body.should.deep.equal(expectedResult)
-        
+
         done()
       })
   })
 })
-describe('/POST empty comment to book',()=>{
-  it('should not allow injection of empty comments',done=>{
-    chai.request(server).post(`/api/books/${idbook}`)
-    .send()
-    .end((err,res)=>{
-      if (err){
-        done(err)
-      }
-      const expectedResult={
-        errors: [
-          {
-                location: "body",
-                param: "comment",
-                msg: "Invalid value"
-          }
-        ]
-      }
-      res.should.have.status(422)
-      res.body.should.include.keys('errors')
-      res.body.should.deep.equal(expectedResult)
-      done()
-
-    })
+describe('/POST empty comment to book', () => {
+  it('should not allow injection of empty comments', done => {
+    chai
+      .request(server)
+      .post(`/api/books/${idbook}`)
+      .send()
+      .end((err, res) => {
+        if (err) {
+          done(err)
+        }
+        const expectedResult = {
+          errors: [
+            {
+              location: 'body',
+              param: 'comment',
+              msg: 'Invalid value'
+            }
+          ]
+        }
+        res.should.have.status(422)
+        res.body.should.include.keys('errors')
+        res.body.should.deep.equal(expectedResult)
+        done()
+      })
   })
 })
 
@@ -253,13 +265,13 @@ describe(`/DELETE deletes book with a non existent id`, () => {
         if (err) {
           done(err)
         }
-        const expectedResult={
+        const expectedResult = {
           errors: [
             {
-                  location: "params",
-                  param: "bookid",
-                  value: "banana",
-                  msg: "Invalid value"
+              location: 'params',
+              param: 'bookid',
+              value: 'banana',
+              msg: 'Invalid value'
             }
           ]
         }
@@ -289,10 +301,12 @@ describe('/DELETE clears the list of the books', () => {
   })
 })
 
-after(done=>{
-  console.log('====================================');
-  console.log('end clearing personal content');
-  console.log('====================================');
-  mongoose.disconnect();
+after(done => {
+  /* eslint-disable */
+  console.log('====================================')
+  console.log('bye bye personal content')
+  console.log('====================================')
+  /* eslint-enable */
+  mongoose.disconnect()
   done()
 })
