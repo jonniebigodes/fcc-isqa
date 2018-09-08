@@ -5,11 +5,17 @@
   "main": "./src/server/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "testissueprojects": "cross-env NODE_ENV=test mocha --compilers js:babel-core/register --require babel-polyfill \"./src/server/__tests__/issuesproject.test\" --exit --timeout 30000",
+    "testissues": "cross-env NODE_ENV=test mocha --compilers js:babel-core/register --require babel-polyfill \"./src/server/__tests__/issues.test.js\" --exit --timeout 30000",
+    "testlibrary": "cross-env NODE_ENV=test mocha --compilers js:babel-core/register --require babel-polyfill \"./src/server/__tests__/library.test.js\" --exit --timeout 30000",
+    "testmessageboard": "cross-env NODE_ENV=test mocha --compilers js:babel-core/register --require babel-polyfill \"./src/server/__tests__/messageboards.test.js\" --exit --timeout 30000",
+    "testmessageboardthreads": "cross-env NODE_ENV=test mocha --compilers js:babel-core/register --require babel-polyfill \"./src/server/__tests__/messageboardsthreads.test.js\" --exit --timeout 30000",
+    "testmessageboardreplies": "cross-env NODE_ENV=test mocha --compilers js:babel-core/register --require babel-polyfill \"./src/server/__tests__/messageboardsthreadsreplies.test.js\" --exit --timeout 30000",
     "testserver": "mocha --compilers js:babel-core/register --require babel-polyfill \"./src/server/__tests__/**/*.js\" --exit --timeout 30000",
     "devserver": "nodemon ./src/server/server.js --exec babel-node",
     "format": "prettier --write \"src/**/*.{js,jsx}\"",
     "lint": "eslint **/*.{js,jsx} --quiet",
-    "commit":"git-cz",
+    "commit": "git-cz",
     "storybook": "start-storybook -p 9001 -c .storybook"
   },
   "repository": {
@@ -33,6 +39,8 @@
   },
   "homepage": "https://github.com/jonniebigodes/fcc-isqa#readme",
   "dependencies": {
+    "@material-ui/core": "^3.0.2",
+    "@material-ui/icons": "^3.0.1",
     "axios": "^0.18.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
@@ -66,6 +74,7 @@
     "prop-types": "^15.6.2",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
+    "react-helmet": "^5.2.0",
     "react-router-dom": "^4.3.1",
     "winston": "^3.0.0"
   },
@@ -75,6 +84,7 @@
     "chai": "^4.1.2",
     "chai-http": "^4.0.0",
     "commitizen": "^2.10.1",
+    "cross-env": "^5.2.0",
     "cz-conventional-changelog": "^2.1.0",
     "dotenv": "^6.0.0",
     "enzyme": "^3.3.0",
