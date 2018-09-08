@@ -59,10 +59,10 @@ if (process.env.NODE_ENV !== 'production') {
 
 app.use('/api/books', PersonalLibraryController)
 app.use('/api/boards', AnonBardsController)
-app.use('/api/issues/projects', ProjectIssueTrackerController)
-app.use('/api/issues', IssueTrackerController)
 app.use('/api/threads', BoardThreadsController)
 app.use('/api/replies', BoardRepliesController)
+app.use('/api/issues/projects', ProjectIssueTrackerController)
+app.use('/api/issues', IssueTrackerController)
 app.use('/api/stock-prices/single', SinglePriceCheckerController)
 app.use('/api/stock-prices/multiple', MultiplePriceCheckerController)
 app.use('/api/stock-prices', PriceCheckerController)
