@@ -24,21 +24,28 @@ const issueprojectmodel = mongoose.model('project_issue')
 
 // #region middleware
 IssueTrackerController.use((req, res, next) => {
-  const sender = req.headers['x-forwarded-for'] || req.connection.remoteAddress
-  logger.info(
-    `issues date=>${new Date()}\n method=>${req.method}\n url=>${req.baseUrl}${
-      req.path
-    } sender:${sender === ':::1' ? 'localhost' : sender}`
-  )
+  if (process.env.NODE_ENV !== 'test') {
+    const sender =
+      req.headers['x-forwarded-for'] || req.connection.remoteAddress
+    logger.info(
+      `issues date=>${new Date()}\n method=>${req.method}\n url=>${
+        req.baseUrl
+      }${req.path} sender:${sender === ':::1' ? 'localhost' : sender}`
+    )
+  }
+
   next() // make sure we go to the next routes and don't stop here
 })
 
 IssueTrackerController.use(async (req, res, next) => {
   try {
-    if (req.method==="GET"){
-      logger.info(`updating issue cache=>${req.method}\n url=>${req.baseUrl}`)
+    if (req.method === 'GET') {
+      if (process.env.NODE_ENV !== 'test') {
+        logger.info(`updating issue cache=>${req.method}\n url=>${req.baseUrl}`)
+      }
+
       const itemscache = Cache.keys().filter(item => item.startsWith('issue_'))
-      itemscache.map(item=>Cache.del(item))
+      itemscache.map(item => Cache.del(item))
 
       const allinfo = await Promise.all([
         issueprojectmodel.find({}),
@@ -52,7 +59,7 @@ IssueTrackerController.use(async (req, res, next) => {
           Cache.put(`issue_${item._id}`, {
             cachedtitle: item.title,
             cachedate: new Date(),
-            cachedissues: issuesdata.filter(y=>y.project===item._id)
+            cachedissues: issuesdata.filter(y => y.project === item._id)
           })
         )
         /* eslint-enable */
@@ -62,7 +69,6 @@ IssueTrackerController.use(async (req, res, next) => {
   } catch (error) {
     logger.info(`IssueTracker issue get error: ${error}`)
     return res.status(500).json({message: 'Something really bad happened'})
-    
   }
 })
 // #endregion
@@ -270,7 +276,7 @@ IssueTrackerController.route('/:project')
           if (itemCached) {
             Cache.del(`issue_${req.params.project}`)
           }
-           /*eslint-disable */
+          /*eslint-disable */
           const newIssue = JSON.parse(JSON.stringify(storeddata))
           delete newIssue.__v
           Cache.put(`issue_${req.params.project}`, {

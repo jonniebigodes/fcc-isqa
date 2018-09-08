@@ -28,20 +28,27 @@ const issuedatamodel = mongoose.model('issue')
 
 // #region middleware
 ProjectIssueTrackerController.use((req, res, next) => {
-  const sender = req.headers['x-forwarded-for'] || req.connection.remoteAddress
-  logger.info(
-    `issues projects date=>${new Date()}\n method=>${req.method}\n url=>${
-      req.baseUrl
-    }${req.path} sender:${sender === ':::1' ? 'localhost' : sender}`
-  )
+  if (process.env.NODE_ENV !== 'test') {
+    const sender =
+      req.headers['x-forwarded-for'] || req.connection.remoteAddress
+    logger.info(
+      `issues projects date=>${new Date()}\n method=>${req.method}\n url=>${
+        req.baseUrl
+      }${req.path} sender:${sender === ':::1' ? 'localhost' : sender}`
+    )
+  }
+
   next() // make sure we go to the next routes and don't stop here
 })
-ProjectIssueTrackerController.use(async (req,res,next)=>{
+ProjectIssueTrackerController.use(async (req, res, next) => {
   try {
-    if (req.method==="GET"){
-      logger.info(`updating issue cache=>${req.method}\n url=>${req.baseUrl}`)
+    if (req.method === 'GET') {
+      if (process.env.NODE_ENV !== 'test') {
+        logger.info(`updating issue cache=>${req.method}\n url=>${req.baseUrl}`)
+      }
+
       const itemscache = Cache.keys().filter(item => item.startsWith('issue_'))
-      itemscache.map(item=>Cache.del(item))
+      itemscache.map(item => Cache.del(item))
 
       const allinfo = await Promise.all([
         projectdatamodel.find({}),
@@ -53,10 +60,10 @@ ProjectIssueTrackerController.use(async (req,res,next)=>{
         const issuesdata = JSON.parse(JSON.stringify(allinfo[1]))
         dataprojects.map(item =>
           Cache.put(`issue_${item._id}`, {
-            cachedid:item._id,
+            cachedid: item._id,
             cachedtitle: item.title,
             cachedate: new Date(),
-            cachedissues: issuesdata.filter(y=>y.project===item._id)
+            cachedissues: issuesdata.filter(y => y.project === item._id)
           })
         )
         /* eslint-enable */
@@ -80,15 +87,15 @@ ProjectIssueTrackerController.route('/')
           data: itemscache.map(item => {
             const projectinfo = Cache.get(item)
             return {
-              idproject:projectinfo.cachedid,
+              idproject: projectinfo.cachedid,
               title: projectinfo.cachedtitle,
               creationDate: projectinfo.cachedate,
-              issues:[]
+              issues: []
             }
           })
         })
       }
-      return res.status(200).json({data:[]})
+      return res.status(200).json({data: []})
     } catch (error) {
       logger.info(`Project issue tracker get error: ${error}`)
       return res.status(500).json({message: 'Something really bad happened'})
@@ -114,7 +121,7 @@ ProjectIssueTrackerController.route('/')
 
       /* eslint-disable */
       Cache.put(`issue_${newProject._id}`, {
-        cachedid:newProject._id,
+        cachedid: newProject._id,
         cachedtitle: req.body.title,
         cachedate: new Date(),
         cachedissues: []

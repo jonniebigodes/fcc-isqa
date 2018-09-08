@@ -21,12 +21,16 @@ const contentLibrary = mongoose.model('personalcontent')
 // #region middleware
 
 PersonalLibraryController.use((req, res, next) => {
-  const sender = req.headers['x-forwarded-for'] || req.connection.remoteAddress
-  logger.info(
-    `library date=>${new Date()}\n method=>${req.method}\n url=>${req.baseUrl}${
-      req.path
-    } sender:${sender === ':::1' ? 'localhost' : sender}`
-  )
+  if (process.env.NODE_ENV !== 'test') {
+    const sender =
+      req.headers['x-forwarded-for'] || req.connection.remoteAddress
+    logger.info(
+      `library date=>${new Date()}\n method=>${req.method}\n url=>${
+        req.baseUrl
+      }${req.path} sender:${sender === ':::1' ? 'localhost' : sender}`
+    )
+  }
+
   next() // make sure we go to the next routes and don't stop here
 })
 
