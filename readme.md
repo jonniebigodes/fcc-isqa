@@ -1,6 +1,6 @@
 # FCC-ISQA
 
-This repository contains the implementation of the Information Security and Quality Assurance Projects for freecodecamp.
+This repository contains the implementation of the Information Security and Quality Assurance Projects for [Freecodecamp].
 
 
 The challenges are the following
@@ -8,7 +8,6 @@ The challenges are the following
   - Issue Tracker
   - Personal Library
   - Stock Price Checker
-  - File Metadata Microservice
   - Anonymous Message Board
 
 # Methodology used
@@ -18,26 +17,24 @@ As it's not in direct contradiction of the rules and/or objective.
 In terms of development methodology i used the following:
   
   - /src/
-    - this folder contains all the view implementation and also the routing logic used. 
-  - /src/components
+    - this folder contains the implementation of the projects. 
+  - /src/client
     - Inside this folder are the components i.e views used for the challenges
-  - /src/Challenges
-    -Inside this folder is the logic applied to every challenge
+  - /src/server
+    - Inside is the server implementation of the project
   - /dist/
-    - This folder contains the release(aka build files).
-  - /uploads/
-    - This folder contains the placeholder for the File Metadata challenge upload info
+    - This folder contains the release(aka build files) for the client.
   - /lib/
     - This folder will contain the server and it's dependencies minified.
 
 
 ### Tech
 
-this set of challenges uses a number of open source projects to work properly:
+This set of challenges uses a number of open source projects to work properly:
 * [React] - Great Javascript library for Building user interfaces
 * [node.js] - evented I/O for the backend
 * [Express] - fast node.js network app framework 
-* [Webpack] - fast packaging framework for deployment
+* [Parcel] - fast packaging framework for deployment
 * [Mongodb] - Best of relational with the innovations of NOSQL
 * [Axios]   - Simple Promise based http request package
 * [Helmet] - Express.js security with HTTP headers.
@@ -48,9 +45,9 @@ And of course the implementation of the projects themselves are open source with
 
 ### Installation from source
 
-fcc-isqa  requires [Node.js](https://nodejs.org/) v5+ to run.
+fcc-isqa  requires [Node.js](https://nodejs.org/) v6+ to run.
 
-Download and extract the [latest pre-built release](https://github.com/jonniebigodes/fcc-isqa/releases).
+Clone the repo from [here](https://github.com/jonniebigodes/fcc-isqa.git).
 
 Install the dependencies and devDependencies and start the server.
 
@@ -79,9 +76,10 @@ MIT
    [node.js]: <http://nodejs.org>
    [express]: <http://expressjs.com>
    [React]: <https://facebook.github.io/react/>
-   [Webpack]: <https://webpack.github.io/>
+   [Parcel]: <https://parceljs.org/>
    [Mongodb]: <https://www.mongodb.com/>
    [PlGh]:  <https://github.com/jonniebigodes/fcc-isqa/tree/master/plugins/github/readme.md>
    [Axios]: <https://github.com/axios/axios>
    [Helmet]: <https://helmetjs.github.io/>
+   [Freecodecamp]:<https://www.freecodecamp.org/>
   
