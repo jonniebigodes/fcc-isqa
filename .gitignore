@@ -3,7 +3,8 @@ node_modules/
 .vscode/
 
 #buildfiles
-dist/bundle.js
+.cache
+dist
 errors.json
 # Local development
 *.env
