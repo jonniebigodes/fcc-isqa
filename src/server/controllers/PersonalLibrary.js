@@ -61,7 +61,7 @@ PersonalLibraryController.route('/')
           )
         )
         return res.status(200).json({
-          data: datacontent.map(item => {
+          bookdata: datacontent.map(item => {
             return {
               id: item._id,
               title: item.title,
@@ -76,7 +76,7 @@ PersonalLibraryController.route('/')
       )
       return res
         .status(200)
-        .json({data: cacheKeys.map(item => Cache.get(item))})
+        .json({bookdata: cacheKeys.map(item => Cache.get(item))})
     } catch (error) {
       logger.info(`PersonalLibraryController error: ${error}`)
       return res.status(500).json({message: 'Something really bad happened'})

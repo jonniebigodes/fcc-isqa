@@ -211,7 +211,7 @@ describe('testing library', () => {
             done(err)
           }
           res.should.have.status(200)
-          res.body.should.have.property('data')
+          res.body.should.have.property('bookdata')
           done()
         })
     })
