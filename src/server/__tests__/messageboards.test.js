@@ -132,7 +132,7 @@ describe('test messageboards', () => {
 
             const {id} = res.body
             boardidentifier = id
-           
+
             res.should.have.status(201)
             res.body.should.have.property('title').eql('testmessageboard2')
             res.body.should.have.property('created')

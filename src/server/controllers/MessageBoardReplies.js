@@ -96,11 +96,11 @@ BoardRepliesController.route('/:boardid')
         if (boardinCache) {
           const {cachedthreads} = boardinCache
           const threadExists = cachedthreads.find(
-            x => x._id === req.query.thread_id
+            x => x._id === req.query.thread_id // eslint-disable-line
           )
 
           if (threadExists) {
-            const {thread_text, created_on, bumped_on, replies} = threadExists
+            const {thread_text, created_on, bumped_on, replies} = threadExists // eslint-disable-line
 
             return res.status(200).json({
               threadtext: thread_text,
@@ -289,7 +289,7 @@ BoardRepliesController.route('/:boardid')
           const dataparsed = JSON.parse(JSON.stringify(itemExists))
           const {replies} = dataparsed
           const positionreply = replies.findIndex(
-            x => x._id === req.query.reply_id
+            x => x._id === req.query.reply_id // eslint-disable-line
           )
           if (positionreply >= 0) {
             if (

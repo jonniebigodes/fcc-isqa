@@ -40,7 +40,8 @@ describe('testing replies', () => {
           .findOne({title: 'mbtesting'})
           .then(result => {
             const parsedData = JSON.parse(JSON.stringify(result))
-            MessageBoardId = parsedData._id
+            /* eslint-disable */
+            MessageBoardId = parsedData._id 
             testmessageboardthread
               .find({board_id: parsedData._id})
               .then(resultthreads => {
@@ -51,6 +52,7 @@ describe('testing replies', () => {
               .catch(errorfind => {
                 done(errorfind)
               })
+              /* eslint-enable */
           })
           .catch(err => {
             done(err)
@@ -147,7 +149,7 @@ describe('testing replies', () => {
           .request(server)
           .post(`/api/replies/${MessageBoardId}`)
           .send({
-            thread_id: MessageboardThreads[0]._id,
+            thread_id: MessageboardThreads[0]._id, // eslint-disable-line
             text: 'testing reply 1',
             delete_password: 'delete1'
           })
@@ -165,7 +167,7 @@ describe('testing replies', () => {
           .request(server)
           .post(`/api/replies/${MessageBoardId}`)
           .send({
-            thread_id: MessageboardThreads[0]._id,
+            thread_id: MessageboardThreads[0]._id, // eslint-disable-line
             text: 'testing reply 2',
             delete_password: 'delete2'
           })
@@ -183,7 +185,7 @@ describe('testing replies', () => {
           .request(server)
           .post(`/api/replies/${MessageBoardId}`)
           .send({
-            thread_id: MessageboardThreads[0]._id,
+            thread_id: MessageboardThreads[0]._id, // eslint-disable-line
             text: 'testing reply 3',
             delete_password: 'delete3'
           })
@@ -201,7 +203,7 @@ describe('testing replies', () => {
           .request(server)
           .post(`/api/replies/${MessageBoardId}`)
           .send({
-            thread_id: MessageboardThreads[1]._id,
+            thread_id: MessageboardThreads[1]._id, // eslint-disable-line
             text: 'testing reply 4',
             delete_password: 'delete4'
           })
@@ -219,7 +221,7 @@ describe('testing replies', () => {
           .request(server)
           .post(`/api/replies/${MessageBoardId}`)
           .send({
-            thread_id: MessageboardThreads[1]._id,
+            thread_id: MessageboardThreads[1]._id, // eslint-disable-line
             text: 'testing reply 5',
             delete_password: 'delete5'
           })
@@ -237,7 +239,7 @@ describe('testing replies', () => {
           .request(server)
           .post(`/api/replies/${MessageBoardId}`)
           .send({
-            thread_id: MessageboardThreads[1]._id,
+            thread_id: MessageboardThreads[1]._id, // eslint-disable-line
             text: 'testing reply 6',
             delete_password: 'delete6'
           })
@@ -255,7 +257,7 @@ describe('testing replies', () => {
           .request(server)
           .post(`/api/replies/${MessageBoardId}`)
           .send({
-            thread_id: MessageboardThreads[2]._id,
+            thread_id: MessageboardThreads[2]._id, // eslint-disable-line
             text: 'testing reply 7',
             delete_password: 'delete7'
           })
@@ -273,7 +275,7 @@ describe('testing replies', () => {
           .request(server)
           .post(`/api/replies/${MessageBoardId}`)
           .send({
-            thread_id: MessageboardThreads[2]._id,
+            thread_id: MessageboardThreads[2]._id, // eslint-disable-line
             text: 'testing reply 8',
             delete_password: 'delete8'
           })
@@ -368,7 +370,7 @@ describe('testing replies', () => {
           .request(server)
           .get(
             `/api/replies/${MessageBoardId}?thread_id=${
-              MessageboardThreads[0]._id
+              MessageboardThreads[0]._id // eslint-disable-line
             }`
           )
           .end((err, res) => {
@@ -387,7 +389,7 @@ describe('testing replies', () => {
           .request(server)
           .get(
             `/api/replies/${MessageBoardId}?thread_id=${
-              MessageboardThreads[1]._id
+              MessageboardThreads[1]._id // eslint-disable-line
             }`
           )
           .end((err, res) => {
@@ -509,7 +511,7 @@ describe('testing replies', () => {
           .request(server)
           .put(
             `/api/replies/${MessageBoardId}?thread_id=${
-              MessageboardThreads[0]._id
+              MessageboardThreads[0]._id // eslint-disable-line
             }&reply_id=5b8ebfd50fd549227470548b`
           )
           .end((err, res) => {
@@ -540,7 +542,7 @@ describe('testing replies', () => {
           .request(server)
           .put(
             `/api/replies/${MessageBoardId}?thread_id=${_id}&reply_id=${
-              replies[0]._id
+              replies[0]._id // eslint-disable-line
             }`
           )
           .end((err, res) => {
@@ -559,7 +561,7 @@ describe('testing replies', () => {
           .request(server)
           .put(
             `/api/replies/${MessageBoardId}?thread_id=${_id}&reply_id=${
-              replies[1]._id
+              replies[1]._id // eslint-disable-line
             }`
           )
           .end((err, res) => {
@@ -686,7 +688,7 @@ describe('testing replies', () => {
           .request(server)
           .del(
             `/api/replies/${MessageBoardId}?thread_id=${
-              MessageboardThreads[0]._id
+              MessageboardThreads[0]._id // eslint-disable-line
             }&reply_id=5b8ebfd50fd549227470548b&delete_password=1`
           )
           .end((err, res) => {
@@ -700,7 +702,7 @@ describe('testing replies', () => {
       it('should not allow delete reply with a wrong password', done => {
         const dataThread = MessageboardThreads[0]
         const {_id, replies} = dataThread
-        const datareply = replies[0]._id
+        const datareply = replies[0]._id // eslint-disable-line
         chai
           .request(server)
           .del(
@@ -720,7 +722,7 @@ describe('testing replies', () => {
       it('should delete from thread 1 reply 1', done => {
         const dataThread = MessageboardThreads[0]
         const {_id, replies} = dataThread
-        const datareply = replies[0]._id
+        const datareply = replies[0]._id // eslint-disable-line
         const pwd = replies[0].reply_delete_password
         chai
           .request(server)
@@ -739,7 +741,7 @@ describe('testing replies', () => {
       it('should delete from thread 1 reply 2', done => {
         const dataThread = MessageboardThreads[0]
         const {_id, replies} = dataThread
-        const datareply = replies[1]._id
+        const datareply = replies[1]._id // eslint-disable-line
         const pwd = replies[1].reply_delete_password
         chai
           .request(server)
@@ -758,7 +760,7 @@ describe('testing replies', () => {
       it('should delete from thread 2 reply 1', done => {
         const dataThread = MessageboardThreads[1]
         const {_id, replies} = dataThread
-        const datareply = replies[0]._id
+        const datareply = replies[0]._id // eslint-disable-line
         const pwd = replies[0].reply_delete_password
         chai
           .request(server)
@@ -777,7 +779,7 @@ describe('testing replies', () => {
       it('should delete from thread 2 reply 2', done => {
         const dataThread = MessageboardThreads[1]
         const {_id, replies} = dataThread
-        const datareply = replies[1]._id
+        const datareply = replies[1]._id // eslint-disable-line
         const pwd = replies[1].reply_delete_password
         chai
           .request(server)

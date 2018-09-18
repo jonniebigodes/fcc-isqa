@@ -205,7 +205,7 @@ describe('testing threads', () => {
             if (err) {
               done(err)
             }
-            
+
             res.should.have.status(200)
             res.body.should.have.property('threads').that.is.an('array')
             res.body.should.have.property('threads').to.be.lengthOf(2)
@@ -288,7 +288,7 @@ describe('testing threads', () => {
         chai
           .request(server)
           .put(
-            `/api/threads/${MessageboardId}?thread_id=${threadstests[0]._id}`
+            `/api/threads/${MessageboardId}?thread_id=${threadstests[0]._id}` // eslint-disable-line
           )
           .end((err, res) => {
             if (err) {
@@ -303,7 +303,7 @@ describe('testing threads', () => {
         chai
           .request(server)
           .put(
-            `/api/threads/${MessageboardId}?thread_id=${threadstests[1]._id}`
+            `/api/threads/${MessageboardId}?thread_id=${threadstests[1]._id}` // eslint-disable-line
           )
           .end((err, res) => {
             if (err) {
@@ -410,7 +410,7 @@ describe('testing threads', () => {
           .request(server)
           .del(
             `/api/threads/${MessageboardId}?thread_id=${
-              threadstests[2]._id
+              threadstests[2]._id // eslint-disable-line
             }&delete_password=1`
           )
           .end((err, res) => {
@@ -429,7 +429,7 @@ describe('testing threads', () => {
           .request(server)
           .del(
             `/api/threads/${MessageboardId}?thread_id=${
-              threadstests[2]._id
+              threadstests[2]._id // eslint-disable-line
             }&delete_password=${threadstests[2].thread_delete_password}`
           )
           .end((err, res) => {
@@ -446,7 +446,7 @@ describe('testing threads', () => {
           .request(server)
           .del(
             `/api/threads/${MessageboardId}?thread_id=${
-              threadstests[3]._id
+              threadstests[3]._id // eslint-disable-line
             }&delete_password=${threadstests[3].thread_delete_password}`
           )
           .end((err, res) => {
