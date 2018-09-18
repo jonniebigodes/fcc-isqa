@@ -13,10 +13,20 @@
     "testmessageboardreplies": "cross-env NODE_ENV=test mocha --compilers js:babel-core/register --require babel-polyfill \"./src/server/__tests__/messageboardsthreadsreplies.test.js\" --exit --timeout 30000",
     "testserver": "mocha --compilers js:babel-core/register --require babel-polyfill \"./src/server/__tests__/**/*.js\" --exit --timeout 30000",
     "devserver": "nodemon ./src/server/server.js --exec babel-node",
+    "devclient": "parcel ./src/client/index.html",
     "format": "prettier --write \"src/**/*.{js,jsx}\"",
     "lint": "eslint **/*.{js,jsx} --quiet",
     "commit": "git-cz",
-    "storybook": "start-storybook -p 9001 -c .storybook"
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook",
+    "buildserver":"npx babel ./src/server/server.js -o ./lib/server.bundle.js --presets minify",
+    "buildlogger":"npx babel ./src/server/logger.js -o ./lib/logger.js --presets minify",
+    "buildmodels":"npx babel ./src/server/models/ --out-dir ./lib --presets minify",
+    "buildcontrollers":"npx babel ./src/server/controllers/ --out-dir ./lib --presets minify",
+    "buildserverdeps":"npm run buildserver && npm run buildlogger && npm run buildmodels && npm run buildcontrollers",
+    "buildclient":"parcel build index.html --public-url ./",
+    "postinstall": "npm run buildserverdeps && npm run buildclient",
+    "start": "node ./lib/server.bundle.js"
   },
   "repository": {
     "type": "git",
@@ -47,6 +57,7 @@
     "babel-eslint": "^8.2.6",
     "babel-loader": "^7.1.5",
     "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-plugin-transform-react-constant-elements": "^6.23.0",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.7.0",
@@ -75,12 +86,19 @@
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
     "react-helmet": "^5.2.0",
+    "react-loadable": "^5.5.0",
     "react-router-dom": "^4.3.1",
+    "uuid": "^3.3.2",
     "winston": "^3.0.0"
   },
   "devDependencies": {
+    "@storybook/addon-actions": "^3.4.10",
+    "@storybook/addon-knobs": "^3.4.10",
+    "@storybook/addon-links": "^3.4.10",
+    "@storybook/addons": "^3.4.10",
     "@storybook/react": "^3.4.10",
     "babel-jest": "^23.4.2",
+    "babel-runtime": "^6.26.0",
     "chai": "^4.1.2",
     "chai-http": "^4.0.0",
     "commitizen": "^2.10.1",
@@ -96,6 +114,7 @@
     "nodemon": "^1.18.3",
     "prettier": "^1.14.0",
     "react-test-renderer": "^16.4.2",
+    "storybook-react-router": "^1.0.1",
     "superagent": "^3.8.3"
   },
   "browserslist": [
