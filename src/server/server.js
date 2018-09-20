@@ -5,6 +5,8 @@ import helmet from 'helmet'
 import compression from 'compression'
 import mongoose from 'mongoose'
 import logger from './logger'
+import DataConversionController from './controllers/DataConverter'
+
 import PriceCheckerController from './controllers/PriceChecker'
 import PersonalLibraryController from './controllers/PersonalLibrary'
 import IssueTrackerController from './controllers/IssueTracker'
@@ -43,7 +45,8 @@ app.use(
     noCache: true,
     xssFilter: {
       setOnOldIE: true
-    }
+    },
+    noSniff: true
   })
 )
 
@@ -56,7 +59,7 @@ if (process.env.NODE_ENV !== 'production') {
   const config = require('dotenv').config()
 }
 /* eslint-enable */
-
+app.use('/api/convert', DataConversionController)
 app.use('/api/books', PersonalLibraryController)
 app.use('/api/boards', AnonBardsController)
 app.use('/api/threads', BoardThreadsController)
