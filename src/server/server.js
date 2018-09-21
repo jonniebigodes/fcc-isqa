@@ -1,3 +1,4 @@
+import path from 'path'
 import express from 'express'
 import bodyParser from 'body-parser'
 import cors from 'cors'
@@ -21,6 +22,8 @@ const app = express()
 
 app.set('port', process.env.PORT || 5000)
 app.use(compression())
+app.use(express.static(path.join(__dirname, process.env.NODE_ENV!=='production'?'../../dist':'../dist')))
+
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -89,7 +92,9 @@ mongoose
   .catch(err => {
     logger.error(`error fcc-isqa:${err}`)
   })
-
+app.get('*',(req,res)=>{
+  res.sendFile('index.html',{root:path.join(__dirname,process.env.NODE_ENV!=='production'?'../../dist/':'../dist/')})
+})
 app.listen(app.get('port'), error => {
   if (error) {
     logger.error(`error fcc-isqa:${error}`)
