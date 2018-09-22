@@ -41,7 +41,7 @@ describe('testing replies', () => {
           .then(result => {
             const parsedData = JSON.parse(JSON.stringify(result))
             /* eslint-disable */
-            MessageBoardId = parsedData._id 
+            MessageBoardId = parsedData._id
             testmessageboardthread
               .find({board_id: parsedData._id})
               .then(resultthreads => {
@@ -52,7 +52,7 @@ describe('testing replies', () => {
               .catch(errorfind => {
                 done(errorfind)
               })
-              /* eslint-enable */
+            /* eslint-enable */
           })
           .catch(err => {
             done(err)
