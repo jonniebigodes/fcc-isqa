@@ -6,17 +6,17 @@ import helmet from 'helmet'
 import compression from 'compression'
 import mongoose from 'mongoose'
 import logger from './logger'
-import DataConversionController from './controllers/DataConverter'
 
-import PriceCheckerController from './controllers/PriceChecker'
-import PersonalLibraryController from './controllers/PersonalLibrary'
-import IssueTrackerController from './controllers/IssueTracker'
-import ProjectIssueTrackerController from './controllers/IssueTrackerProject'
-import AnonBardsController from './controllers/MessageBoard'
-import BoardThreadsController from './controllers/MessageBoardThreads'
-import BoardRepliesController from './controllers/MessageBoardReplies'
-import SinglePriceCheckerController from './controllers/SinglePriceChecker'
-import MultiplePriceCheckerController from './controllers/MultiplePriceChecker'
+const DataConversionController =process.env.NODE_ENV!=='production'?require('./controllers/DataConverter').default:require('./DataConverter').default
+const PersonalLibraryController= process.env.NODE_ENV!=='production'?require('./controllers/PersonalLibrary').default:require('./PersonalLibraryController').default
+const PriceCheckerController= process.env.NODE_ENV!=='production'?require('./controllers/PriceChecker').default:require('./PriceChecker').default
+const IssueTrackerController= process.env.NODE_ENV!=='production'?require('./controllers/IssueTracker').default:require('./IssueTracker').default
+const ProjectIssueTrackerController= process.env.NODE_ENV!=='production'?require('./controllers/IssueTrackerProject').default:require('./IssueTrackerProject').default
+const AnonBardsController= process.env.NODE_ENV!=='production'?require('./controllers/MessageBoard').default:require('./MessageBoard').default
+const BoardThreadsController= process.env.NODE_ENV!=='production'?require('./controllers/MessageBoardThreads').default:require('./MessageBoardThreads').default
+const BoardRepliesController= process.env.NODE_ENV!=='production'?require('./controllers/MessageBoardReplies').default:require('./MessageBoardReplies').default
+const SinglePriceCheckerController= process.env.NODE_ENV!=='production'?require('./controllers/SinglePriceChecker').default:require('./SinglePriceChecker').default
+const MultiplePriceCheckerController= process.env.NODE_ENV!=='production'?require('./controllers/MultiplePriceChecker').default:require('./MultiplePriceChecker').default
 
 const app = express()
 
