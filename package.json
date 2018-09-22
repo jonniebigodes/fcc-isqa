@@ -18,7 +18,7 @@
     "format": "prettier --write \"src/**/*.{js,jsx}\"",
     "lint": "eslint **/*.{js,jsx} --quiet",
     "commit": "git-cz",
-    "storybook": "start-storybook -p 6006",
+    "storybook": "cross-env NODE_ENV=stories start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "buildserver": "npx babel ./src/server/server.js -o ./lib/server.bundle.js --presets minify",
     "buildlogger": "npx babel ./src/server/logger.js -o ./lib/logger.js --presets minify",
