@@ -57,7 +57,7 @@ const BookAdd = props => {
             <Typography gutterBottom variant="headline" align="center">
               Add a book to the collection
             </Typography>
-            <form className={classes.form}>
+            <form className={classes.form} onSubmit={e=>e.preventDefault()}>
               <FormControl margin="normal" required fullWidth>
                 <InputLabel htmlFor="book">Add a book </InputLabel>
                 <Input value={bookName}

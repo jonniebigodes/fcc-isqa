@@ -55,8 +55,7 @@ export class PersonalLibraryProvider extends Component {
     const {bookName} = this.state
     if (bookName !== '') {
       if (
-        process.env.NODE_ENV !== 'production' ||
-        process.env.NODE_ENV !== 'development'
+        process.env.NODE_ENV === 'stories'
       ) {
         this.UIaddBookCollection()
       } else {
@@ -83,7 +82,8 @@ export class PersonalLibraryProvider extends Component {
                   comments: []
                 }
               ],
-              bookName: ''
+              bookName:'',
+              drawerOpen:false
             }))
           })
           .catch(err => {
@@ -113,7 +113,10 @@ export class PersonalLibraryProvider extends Component {
           expanded: false,
           comments: []
         }
-      ]
+      ],
+      bookName:'',
+      drawerOpen:false
+
     }))
   }
   // #endregion
@@ -127,8 +130,7 @@ export class PersonalLibraryProvider extends Component {
 
     if (selectedBook.id) {
       if (
-        process.env.NODE_ENV !== 'production' ||
-        process.env.NODE_ENV !== 'development'
+        process.env.NODE_ENV === 'stories'
       ) {
         const {comments} = selectedBook
         const newdata = [
@@ -175,8 +177,7 @@ export class PersonalLibraryProvider extends Component {
    */
   fetchData = () => {
     if (
-      process.env.NODE_ENV !== 'production' ||
-      process.env.NODE_ENV !== 'development'
+      process.env.NODE_ENV === 'stories'
     ) {
       this.setState({books: dummyData, loading: false})
     } else {
@@ -237,8 +238,7 @@ export class PersonalLibraryProvider extends Component {
     const {selectedBook} = this.state
     if (selectedBook.id) {
       if (
-        process.env.NODE_ENV !== 'production' ||
-        process.env.NODE_ENV !== 'development'
+        process.env.NODE_ENV === 'stories' 
       ) {
         this.setState(prevState => ({
           books: prevState.books.filter(x => x.id !== selectedBook.id),
@@ -279,8 +279,7 @@ export class PersonalLibraryProvider extends Component {
    */
   deleteAllBooks = () => {
     if (
-      process.env.NODE_ENV !== 'production' ||
-      process.env.NODE_ENV !== 'development'
+      process.env.NODE_ENV === 'stories' 
     ) {
       this.setState({books: [], selectedBook: {}})
     } else {

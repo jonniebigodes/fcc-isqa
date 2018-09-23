@@ -21,13 +21,14 @@ const styles = theme => ({
     marginTop: theme.spacing.unit
   }
 })
+
 const Converter = props => {
   const {classes} = props
   return (
     <MetricConverterContext.Consumer>
       {({convertInput, convert,addInputConvert}) => (
         <div className={classes.root}>
-          <form className={classes.form}>
+          <form className={classes.form} onSubmit={e=>e.preventDefault()}>
             <FormControl margin="normal" required fullWidth>
               <InputLabel htmlFor="email">Units to convert</InputLabel>
               <Input
