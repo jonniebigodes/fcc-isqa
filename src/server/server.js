@@ -7,6 +7,7 @@ import compression from 'compression'
 import mongoose from 'mongoose'
 import logger from './logger'
 
+logger.info(`process=>${process.env.NODE_ENV}`)
 const DataConversionController =process.env.NODE_ENV!=='production'?require('./controllers/DataConverter').default:require('./DataConverter').default
 const PersonalLibraryController= process.env.NODE_ENV!=='production'?require('./controllers/PersonalLibrary').default:require('./PersonalLibraryController').default
 const PriceCheckerController= process.env.NODE_ENV!=='production'?require('./controllers/PriceChecker').default:require('./PriceChecker').default
