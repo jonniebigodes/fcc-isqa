@@ -1,7 +1,11 @@
 import 'babel-polyfill'
 import express from 'express'
 import {validationResult, query} from 'express-validator/check'
-import logger from '../logger'
+
+const logger =
+  process.env.NODE_ENV !== 'production'
+    ? require('../logger').default
+    : require('./logger').default // eslint-disable-line
 
 const DataConversionController = express.Router()
 
@@ -51,7 +55,7 @@ const unitConverter = {
 }
 
 const AlphaNumericTest = /[A-Za-z]+/g
-const NumberTest = /\d+(\.\d+)?(\/\d+(\.\d+)?)?/g;// eslint-disable-line
+const NumberTest = /\d+(\.\d+)?(\/\d+(\.\d+)?)?/g // eslint-disable-line
 
 DataConversionController.use((req, res, next) => {
   if (process.env.NODE_ENV !== 'test') {
@@ -67,35 +71,16 @@ DataConversionController.use((req, res, next) => {
 })
 
 const parseNumber = value => {
-  
-  const data=value.split(/[a-z]/)[0];
-  if (data===''){
+  const data = value.split(/[a-z]/)[0]
+  if (data === '') {
     return 1
-  } 
-  const dataMatch=data.match(NumberTest)
-  
-  if (dataMatch.length && dataMatch[0].length===data.length){
+  }
+  const dataMatch = data.match(NumberTest)
+
+  if (dataMatch.length && dataMatch[0].length === data.length) {
     return data
   }
   return 'invalid number'
-  /* const firstCharTest = /[!@#$ %^&* (),.?":{}|<>]/g.test(value[0])
-  if (firstCharTest) {
-    return 'invalid number'
-  }
-
-  if (!/[0-9]/.test(value[0])) {
-    return 1
-  }
-  const num = value.match(NumberTest).toString()
-  if (/\//g.test(num)) {
-    if (num.match(/\//g).length > 1) {
-      return 'invalid number'
-    }
-    result = Math.round(eval(num), 5) // eslint-disable-line
-  } else {
-    result = value.match(NumberTest)
-  }
-  return Number(result) */
 }
 const parseUnit = value => {
   const unitpos = value.indexOf(value.match(AlphaNumericTest))
@@ -130,10 +115,10 @@ const MakeConversion = async value => {
         operationResult = parseinputresult / dataConvert.value
       }
       return {
-        initNum:parseinputresult,
-        initUnit:entryUnit,
-        returnNum:operationResult,
-        returnUnit:resultUnit,
+        initNum: parseinputresult,
+        initUnit: entryUnit,
+        returnNum: operationResult,
+        returnUnit: resultUnit,
         stringresult: `${parseinputresult} ${entryText} converts to ${Math.round(
           operationResult * 100000
         ) / 100000} ${resultText}`

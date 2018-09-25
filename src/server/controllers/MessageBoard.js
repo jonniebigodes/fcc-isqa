@@ -6,7 +6,11 @@ import express from 'express'
 import Cache from 'memory-cache'
 import mongoose from 'mongoose'
 import {body, param, validationResult} from 'express-validator/check'
-import logger from '../logger'
+
+const logger =
+  process.env.NODE_ENV !== 'production'
+    ? require('../logger').default
+    : require('./logger').default // eslint-disable-line
 
 const AnonBardsController = express.Router()
 

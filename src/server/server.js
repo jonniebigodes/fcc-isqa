@@ -7,23 +7,52 @@ import compression from 'compression'
 import mongoose from 'mongoose'
 import logger from './logger'
 
-logger.info(`process=>${process.env.NODE_ENV}`)
-const DataConversionController =process.env.NODE_ENV!=='production'?require('./controllers/DataConverter').default:require('./DataConverter').default
-const PersonalLibraryController= process.env.NODE_ENV!=='production'?require('./controllers/PersonalLibrary').default:require('./PersonalLibraryController').default
-const PriceCheckerController= process.env.NODE_ENV!=='production'?require('./controllers/PriceChecker').default:require('./PriceChecker').default
-const IssueTrackerController= process.env.NODE_ENV!=='production'?require('./controllers/IssueTracker').default:require('./IssueTracker').default
-const ProjectIssueTrackerController= process.env.NODE_ENV!=='production'?require('./controllers/IssueTrackerProject').default:require('./IssueTrackerProject').default
-const AnonBardsController= process.env.NODE_ENV!=='production'?require('./controllers/MessageBoard').default:require('./MessageBoard').default
-const BoardThreadsController= process.env.NODE_ENV!=='production'?require('./controllers/MessageBoardThreads').default:require('./MessageBoardThreads').default
-const BoardRepliesController= process.env.NODE_ENV!=='production'?require('./controllers/MessageBoardReplies').default:require('./MessageBoardReplies').default
-const SinglePriceCheckerController= process.env.NODE_ENV!=='production'?require('./controllers/SinglePriceChecker').default:require('./SinglePriceChecker').default
-const MultiplePriceCheckerController= process.env.NODE_ENV!=='production'?require('./controllers/MultiplePriceChecker').default:require('./MultiplePriceChecker').default
+const DataConversionController =
+  process.env.NODE_ENV !== 'production'
+    ? require('./controllers/DataConverter').default
+    : require('./DataConverter').default
+const PersonalLibraryController =
+  process.env.NODE_ENV !== 'production'
+    ? require('./controllers/PersonalLibrary').default
+    : require('./PersonalLibraryController').default
+const PriceCheckerController =
+  process.env.NODE_ENV !== 'production'
+    ? require('./controllers/PriceChecker').default
+    : require('./PriceChecker').default
+const IssueTrackerController =
+  process.env.NODE_ENV !== 'production'
+    ? require('./controllers/IssueTracker').default
+    : require('./IssueTracker').default
+const ProjectIssueTrackerController =
+  process.env.NODE_ENV !== 'production'
+    ? require('./controllers/IssueTrackerProject').default
+    : require('./IssueTrackerProject').default
+const AnonBardsController =
+  process.env.NODE_ENV !== 'production'
+    ? require('./controllers/MessageBoard').default
+    : require('./MessageBoard').default
+const BoardThreadsController =
+  process.env.NODE_ENV !== 'production'
+    ? require('./controllers/MessageBoardThreads').default
+    : require('./MessageBoardThreads').default
+const BoardRepliesController =
+  process.env.NODE_ENV !== 'production'
+    ? require('./controllers/MessageBoardReplies').default
+    : require('./MessageBoardReplies').default
+const SinglePriceCheckerController =
+  process.env.NODE_ENV !== 'production'
+    ? require('./controllers/SinglePriceChecker').default
+    : require('./SinglePriceChecker').default
+const MultiplePriceCheckerController =
+  process.env.NODE_ENV !== 'production'
+    ? require('./controllers/MultiplePriceChecker').default
+    : require('./MultiplePriceChecker').default
 
 const app = express()
 
 app.set('port', process.env.PORT || 5000)
 app.use(compression())
-app.use(express.static(path.join(__dirname, process.env.NODE_ENV!=='production'?'../../dist':'../dist')))
+app.use(express.static(path.join(__dirname, '../dist')))
 
 app.use(
   helmet({
@@ -93,8 +122,13 @@ mongoose
   .catch(err => {
     logger.error(`error fcc-isqa:${err}`)
   })
-app.get('*',(req,res)=>{
-  res.sendFile('index.html',{root:path.join(__dirname,process.env.NODE_ENV!=='production'?'../../dist/':'../dist/')})
+app.get('*', (req, res) => {
+  res.sendFile('index.html', {
+    root: path.join(
+      __dirname,
+      process.env.NODE_ENV !== 'production' ? '../../dist/' : '../dist/'
+    )
+  })
 })
 app.listen(app.get('port'), error => {
   if (error) {

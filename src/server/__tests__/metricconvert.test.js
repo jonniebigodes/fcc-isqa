@@ -17,13 +17,13 @@ describe('Testing metric converter', () => {
           if (err) {
             done(err)
           }
-          const expectedResult={
+          const expectedResult = {
             initNum: 20,
-            initUnit: "l",
+            initUnit: 'l',
             returnNum: 5.283443537159779,
-            returnUnit: "gal",
-            stringresult: "20 liters converts to 5.28344 gallons"
-        }
+            returnUnit: 'gal',
+            stringresult: '20 liters converts to 5.28344 gallons'
+          }
           res.should.have.status(200)
           res.body.toString().should.equal(expectedResult.toString())
           done()
@@ -38,13 +38,13 @@ describe('Testing metric converter', () => {
           if (err) {
             done(err)
           }
-          const expectedResult={
+          const expectedResult = {
             initNum: 100,
-            initUnit: "km",
+            initUnit: 'km',
             returnNum: 62.137273664980675,
-            returnUnit: "mi",
-            stringresult: "100 kilometers converts to 62.13727 miles"
-        }
+            returnUnit: 'mi',
+            stringresult: '100 kilometers converts to 62.13727 miles'
+          }
           res.should.have.status(200)
           res.body.toString().should.equal(expectedResult.toString())
           done()
@@ -59,13 +59,13 @@ describe('Testing metric converter', () => {
           if (err) {
             done(err)
           }
-          const expectedResult={
+          const expectedResult = {
             initNum: 32,
-            initUnit: "kg",
+            initUnit: 'kg',
             returnNum: 70.54798144588088,
-            returnUnit: "lbs",
-            stringresult: "32 kilograms converts to 70.54798 pounds"
-        }
+            returnUnit: 'lbs',
+            stringresult: '32 kilograms converts to 70.54798 pounds'
+          }
           res.should.have.status(200)
           res.body.toString().should.equal(expectedResult.toString())
           done()
@@ -133,7 +133,7 @@ describe('Testing metric converter', () => {
           if (err) {
             done(err)
           }
-         
+
           res.should.have.status(200)
           // check by debug res.body.should.equal('invalid number and unit')
           res.body.should.equal('invalid number')
@@ -150,11 +150,11 @@ describe('Testing metric converter', () => {
             done(err)
           }
           const expectedResult = {
-            initNum:1,
-            initUnit:'kg',
-            returnNum:2.2046244201837775,
-            returnUnit:'lbs',
-            stringresult:"1 kilograms converts to 2.20462 pounds"
+            initNum: 1,
+            initUnit: 'kg',
+            returnNum: 2.2046244201837775,
+            returnUnit: 'lbs',
+            stringresult: '1 kilograms converts to 2.20462 pounds'
           }
           res.should.have.status(200)
           res.body.toString().should.equal(expectedResult.toString())
