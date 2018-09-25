@@ -14,7 +14,8 @@ const DataConversionController =
 const PersonalLibraryController =
   process.env.NODE_ENV !== 'production'
     ? require('./controllers/PersonalLibrary').default
-    : require('./PersonalLibraryController').default
+    : require('./PersonalLibrary').default
+    
 const PriceCheckerController =
   process.env.NODE_ENV !== 'production'
     ? require('./controllers/PriceChecker').default
