@@ -1,5 +1,5 @@
 import React from 'react'
-import PropTypes from 'prop-types';
+import PropTypes from 'prop-types'
 import {withStyles} from '@material-ui/core/styles'
 import FormControl from '@material-ui/core/FormControl'
 import Input from '@material-ui/core/Input'
@@ -26,9 +26,9 @@ const Converter = props => {
   const {classes} = props
   return (
     <MetricConverterContext.Consumer>
-      {({convertInput, convert,addInputConvert}) => (
+      {({convertInput, convert, addInputConvert}) => (
         <div className={classes.root}>
-          <form className={classes.form} onSubmit={e=>e.preventDefault()}>
+          <form className={classes.form} onSubmit={e => e.preventDefault()}>
             <FormControl margin="normal" required fullWidth>
               <InputLabel htmlFor="email">Units to convert</InputLabel>
               <Input
@@ -56,7 +56,7 @@ const Converter = props => {
     </MetricConverterContext.Consumer>
   )
 }
-Converter.propTypes={
-  classes:PropTypes.object.isRequired // eslint-disable-line
+Converter.propTypes = {
+  classes: PropTypes.object.isRequired // eslint-disable-line
 }
 export default withStyles(styles)(Converter)

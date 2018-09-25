@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {Component} from 'react'
 import {withStyles} from '@material-ui/core/styles'
 import Divider from '@material-ui/core/Divider'
 import IconButton from '@material-ui/core/IconButton'
@@ -14,9 +14,6 @@ import Typography from '@material-ui/core/Typography'
 import Tooltip from '@material-ui/core/Tooltip'
 import PropTypes from 'prop-types'
 import uuid from 'uuid'
-import {PersonalLibraryContext} from '../../contexts/PersonalLibraryContext'
-
-// import '../../Assets/css/app.css'
 
 const styles = theme => ({
   root: {
@@ -26,8 +23,8 @@ const styles = theme => ({
     height: '100%'
   },
   list: {
-    marginLeft: theme.spacing.unit,
-    width: '300px'
+    padding: theme.spacing.unit,
+    width:'100%',
   },
   button: {
     margin: theme.spacing.unit
@@ -42,6 +39,7 @@ const styles = theme => ({
     marginBottom: theme.spacing.unit * 2,
     width: 200
   },
+
   listitem: {
     border: '1px solid #008080',
     display: 'flex',
@@ -49,7 +47,7 @@ const styles = theme => ({
     width: '100%',
     background: 'white',
     transition: 'all ease-out 150ms',
-    marginTop:theme.spacing.unit,
+    marginTop: theme.spacing.unit,
     marginBottom: theme.spacing.unit
   },
   title: {
@@ -63,18 +61,66 @@ const styles = theme => ({
   }
 })
 
-const expandedBook = props => {
-  const {classes, bookdata} = props // eslint-disable-line
-  const {title, comments, id} = bookdata
-  return (
-    <PersonalLibraryContext.Consumer>
-      {({expandBook, bookDelete, CommentAdd}) => (
+class Book extends Component {
+
+  state={
+    bookComment:''
+  }
+
+  /* shouldComponentUpdate(nextProps){
+    const {bookdata}= this.props
+    const {expanded,comments}= bookdata
+    const nextBook=nextProps.bookdata
+    const nextExpanded=nextBook.expanded
+    const nextComments=nextBook.comments
+
+    console.log('====================================');
+    console.log(`props expanded=>${expanded} next props expanded=>${nextExpanded}`);
+    console.log(`props comments=>${comments.length} next props comments=>${nextComments.length}`);
+    console.log('====================================');
+    if (comments.length!==nextComments.length){
+      return true
+    }
+    return false
+  } */
+  
+  onDeleteHandler = () => {
+    const {DeleteBook} = this.props
+    DeleteBook()
+  }
+
+  onChangeHandler=event=>{
+    
+    this.setState({bookComment:event.target.value})
+  }
+
+  onExpandHandler = () => {
+    const {ShowComments, bookdata} = this.props
+    ShowComments(bookdata.id)
+  }
+
+  onCommentAdd = () => {
+    const {AddBookComment} = this.props
+    const {bookComment}= this.state
+
+    if (bookComment!==''){
+      AddBookComment(bookComment)
+    }
+    
+  }
+
+  render() {
+    const {bookdata, classes} = this.props
+    const {expanded, title,comments} = bookdata
+    const {bookComment}= this.state;
+    if (expanded) {
+      return (
         <div className={classes.listitem}>
           <Tooltip title="remove book">
             <IconButton
               className={classes.button}
               aria-label="Delete"
-              onClick={() => bookDelete()}>
+              onClick={this.onDeleteHandler}>
               <DeleteIcon />
             </IconButton>
           </Tooltip>
@@ -86,30 +132,13 @@ const expandedBook = props => {
           </div>
           <div className={classes.title}>
             <Typography component="p" gutterBottom>
-              {`Comments: ${comments.length}`}
+            {`Comments: ${comments.length}`}
             </Typography>
           </div>
-          {/* <div className="title">
-             <input
-              type="text"
-              value={title}
-              readOnly
-              placeholder="Input title"
-              style={{textOverflow: 'ellipsis'}}
-            />
-          </div> */}
-          {/* <div className="title">
-            <input
-              type="text"
-              value={`Comments: ${comments.length}`}
-              readOnly
-              placeholder="Input title"
-              style={{textOverflow: 'ellipsis'}}
-            />
-          </div> */}
+
           <Tooltip title="collapse">
             <IconButton
-              onClick={() => expandBook(id)}
+              onClick={this.onExpandHandler}
               className={classes.button}
               aria-label="collapse">
               <RemoveIcon />
@@ -120,113 +149,75 @@ const expandedBook = props => {
           <div className={classes.root}>
             <Divider />
             {/* eslint-disable */}
-            <List component="nav" className={classes.list}>
-              {comments.map(item => (
-                <ListItem key={`comment_${uuid.v4()}`}>
-                  <ListItemText primary={item.commentText} />
-                </ListItem>
-              ))}
-            </List>
+            {comments.length===0?<div></div>:<List component="nav" className={classes.list}>
+            
+            {comments.map(item => (
+              <ListItem key={`comment_${uuid.v4()}`}>
+                <ListItemText primary={item.commentText} secondary={`on: ${new Date(item.dateadded)}`} />
+              </ListItem>
+            ))}
+          </List>}
+            
             {/* eslint-enable */}
             <Divider />
             <div className={classes.container}>
               <TextField
                 className={classes.textField}
                 helperText="Insert comment"
+                value={bookComment}
+                onChange={this.onChangeHandler}
               />
               <Tooltip title="Add comment">
                 <IconButton
                   className={classes.button}
-                  onClick={() => CommentAdd()}
+                  onClick={this.onCommentAdd}
                   aria-label="Add comment">
                   <CommentIcon />
                 </IconButton>
               </Tooltip>
-
-              {/* <Button
-                variant="contained"
-                size="small"
-                color="primary"
-                aria-label="Add comment"
-                className={classes.button}
-                onClick={() => CommentAdd()}>
-                Add comment
-              </Button> */}
             </div>
           </div>
         </div>
-      )}
-    </PersonalLibraryContext.Consumer>
-  )
-}
-const normalBook = props => {
-  const {bookdata, classes} = props // eslint-disable-line
-  const {title, comments, id} = bookdata
-  return (
-    <PersonalLibraryContext.Consumer>
-      {({expandBook, bookDelete}) => (
-        <div className={classes.listitem}>
-          <Tooltip title="remove book">
-            <IconButton
-              className={classes.button}
-              aria-label="Delete"
-              onClick={() => bookDelete()}>
-              <DeleteIcon />
-            </IconButton>
-          </Tooltip>
+      )
+    }
+    return (
+      <div className={classes.listitem}>
+        <Tooltip title="remove book">
+          <IconButton
+            className={classes.button}
+            aria-label="Delete"
+            onClick={this.onDeleteHandler}>
+            <DeleteIcon />
+          </IconButton>
+        </Tooltip>
 
-          <div className={classes.title}>
-            <Typography component="p" gutterBottom>
-              {title}
-            </Typography>
-          </div>
-          {/* <div className="title">
-            <input
-              type="text"
-              value={title}
-              readOnly
-              placeholder="Input title"
-              style={{textOverflow: 'ellipsis'}}
-            />
-          </div> */}
-          <div className={classes.title}>
-            <Typography component="p" gutterBottom>
-              {`Comments: ${comments.length}`}
-            </Typography>
-          </div>
-          {/* <div className="title">
-            <input
-              type="text"
-              value={`Comments: ${comments.length}`}
-              readOnly
-              placeholder="Input title"
-              style={{textOverflow: 'ellipsis'}}
-            />
-          </div> */}
-          <Tooltip title="expand">
-            <IconButton
-              onClick={() => expandBook(id)}
-              className={classes.button}
-              aria-label="expand">
-              <AddIcon />
-            </IconButton>
-          </Tooltip>
+        <div className={classes.title}>
+          <Typography component="p" gutterBottom>
+            {title}
+          </Typography>
         </div>
-      )}
-    </PersonalLibraryContext.Consumer>
-  )
-}
-const Book = props => {
-  /* eslint-disable*/
-  const {bookdata} = props
-  const {expanded} = bookdata
-  /* eslint-enable */
-  return expanded ? expandedBook(props) : normalBook(props)
+
+        <div className={classes.title}>
+          <Typography component="p" gutterBottom>
+          {`Comments: ${comments.length}`}
+          </Typography>
+        </div>
+
+        <Tooltip title="expand">
+          <IconButton
+            onClick={this.onExpandHandler}
+            className={classes.button}
+            aria-label="expand">
+            <AddIcon />
+          </IconButton>
+        </Tooltip>
+      </div>
+    )
+  }
 }
 
 Book.propTypes = {
   classes: PropTypes.object.isRequired, // eslint-disable-line
-  CommentAdd: PropTypes.func,
   bookdata: PropTypes.shape({
     id: PropTypes.string,
     expanded: PropTypes.bool,
@@ -234,9 +225,12 @@ Book.propTypes = {
     comments: PropTypes.arrayOf(
       PropTypes.shape({
         commentText: PropTypes.string,
-        dateadded: PropTypes.instanceOf(Date)
+        dateadded: PropTypes.string
       })
     )
-  })
+  }),
+  AddBookComment: PropTypes.func,
+  ShowComments: PropTypes.func,
+  DeleteBook: PropTypes.func
 }
 export default withStyles(styles)(Book)

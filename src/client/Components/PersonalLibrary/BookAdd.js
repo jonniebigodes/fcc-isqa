@@ -10,12 +10,11 @@ import Typography from '@material-ui/core/Typography'
 import {withStyles} from '@material-ui/core/styles'
 import {PersonalLibraryContext} from '../../contexts/PersonalLibraryContext'
 
-
 const styles = theme => ({
   container: {
-    display:'block',
-    width:'auto',
-    height:'auto',
+    display: 'block',
+    width: 'auto',
+    height: 'auto',
     marginLeft: theme.spacing.unit * 3,
     marginRight: theme.spacing.unit * 3,
     background: '#ffff',
@@ -23,9 +22,7 @@ const styles = theme => ({
       width: 500,
       marginLeft: 'auto',
       marginRight: 'auto'
-    },
-    
-    
+    }
   },
   paper: {
     marginTop: theme.spacing.unit * 8,
@@ -35,12 +32,12 @@ const styles = theme => ({
     padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme
       .spacing.unit * 3}px`
   },
-  form:{
-      width:'100%',
-      marginTop: theme.spacing.unit
+  form: {
+    width: '100%',
+    marginTop: theme.spacing.unit
   },
   inputMessage: {
-    marginTop: theme.spacing.unit*2
+    marginTop: theme.spacing.unit * 2
   },
   button: {
     margin: theme.spacing.unit
@@ -57,19 +54,24 @@ const BookAdd = props => {
             <Typography gutterBottom variant="headline" align="center">
               Add a book to the collection
             </Typography>
-            <form className={classes.form} onSubmit={e=>e.preventDefault()}>
+            <form className={classes.form} onSubmit={e => e.preventDefault()}>
               <FormControl margin="normal" required fullWidth>
                 <InputLabel htmlFor="book">Add a book </InputLabel>
-                <Input value={bookName}
-                onChange={event=>setBookName(event.target.value)}
-                inputProps={{
-                  'aria-label':'Add book',
-
-                }}/>
+                <Input
+                  value={bookName}
+                  onChange={event => setBookName(event.target.value)}
+                  inputProps={{
+                    'aria-label': 'Add book'
+                  }}
+                />
               </FormControl>
             </form>
             <Tooltip title="Add the book">
-              <Button variant="contained" color="primary" fullWidth onClick={() => BookAdd()}>
+              <Button
+                variant="contained"
+                color="primary"
+                fullWidth
+                onClick={() => BookAdd()}>
                 Save Book
               </Button>
             </Tooltip>

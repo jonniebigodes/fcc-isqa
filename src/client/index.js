@@ -1,7 +1,7 @@
 import React from 'react'
 import {render} from 'react-dom'
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import  CssBaseline  from '@material-ui/core/CssBaseline';
+import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles'
+import CssBaseline from '@material-ui/core/CssBaseline'
 import green from '@material-ui/core/colors/green'
 import lime from '@material-ui/core/colors/lime'
 import Loadable from 'react-loadable'
@@ -10,13 +10,12 @@ import UrlNotFound from './Components/UrlNotFound'
 import Loader from './Components/Loader/Loader'
 import Template from './Template/index'
 
-
-const theme=createMuiTheme({
-  palette:{
-    primary:green,
-    secondary:lime,
+const theme = createMuiTheme({
+  palette: {
+    primary: green,
+    secondary: lime,
     contrastThreshold: 3,
-    tonalOffset: 0.2,
+    tonalOffset: 0.2
   }
 })
 
@@ -59,20 +58,20 @@ const Home = Loadable({
 
 render(
   <MuiThemeProvider theme={theme}>
-    <CssBaseline/>
+    <CssBaseline />
     <BrowserRouter>
-    <Template>
-      <Switch>
-        <Route path="/" exact component={Home} />
-        <Route path="/books" exact component={Personal} />
-        <Route path="/issuetracker" exact component={IssueTrack} />
-        <Route path="/messageboards" exact component={Messages} />
-        <Route path="/metrics" exact component={Metric} />
-        <Route path="/stockdata" exact component={Stocks} />
-        <Route component={UrlNotFound} />
-      </Switch>
-    </Template>
-  </BrowserRouter>
+      <Template>
+        <Switch>
+          <Route path="/" exact component={Home} />
+          <Route path="/books" exact component={Personal} />
+          <Route path="/issuetracker" exact component={IssueTrack} />
+          <Route path="/messageboards" exact component={Messages} />
+          <Route path="/metrics" exact component={Metric} />
+          <Route path="/stockdata" exact component={Stocks} />
+          <Route component={UrlNotFound} />
+        </Switch>
+      </Template>
+    </BrowserRouter>
   </MuiThemeProvider>,
   document.getElementById('root')
 )

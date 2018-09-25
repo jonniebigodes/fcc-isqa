@@ -13,26 +13,14 @@ export class PersonalLibraryProvider extends Component {
     books: [],
     selectedBook: {},
     bookName: '',
-    addCommentText: '',
     isError: false,
     loading: true,
     drawerOpen: false,
     drawerInfoOpen: false
+    
   }
   // #endregion
 
-  // #region set comment
-  /**
-   * fat arrow function to define the contents of the comment to the specific book
-   * @param {String} value contains the comment text
-   */
-  setComment = value => {
-    const {selectedBook} = this.state
-    if (selectedBook.id) {
-      this.setState({addCommentText: value})
-    }
-  }
-  // #endregion
 
   // #region addbookname
   /**
@@ -49,14 +37,10 @@ export class PersonalLibraryProvider extends Component {
    * fat arrow function to inject the book in the collection
    */
   addBookCollection = () => {
-    console.log('====================================');
-    console.log(`node env=>${process.env.NODE_ENV}`);
-    console.log('====================================');
+    
     const {bookName} = this.state
     if (bookName !== '') {
-      if (
-        process.env.NODE_ENV === 'stories'
-      ) {
+      if (process.env.NODE_ENV === 'stories') {
         this.UIaddBookCollection()
       } else {
         axios
@@ -82,16 +66,14 @@ export class PersonalLibraryProvider extends Component {
                   comments: []
                 }
               ],
-              bookName:'',
-              drawerOpen:false
+              bookName: '',
+              drawerOpen: false
             }))
           })
           .catch(err => {
             /* eslint-disable */
             console.log('====================================')
-            console.log(
-              `error posting book to the collection:\n${err}`
-            )
+            console.log(`error posting book to the collection:\n${err}`)
             console.log('====================================')
             /* eslint-enable */
             this.setState({isError: true})
@@ -114,9 +96,8 @@ export class PersonalLibraryProvider extends Component {
           comments: []
         }
       ],
-      bookName:'',
-      drawerOpen:false
-
+      bookName: '',
+      drawerOpen: false
     }))
   }
   // #endregion
@@ -125,17 +106,14 @@ export class PersonalLibraryProvider extends Component {
   /**
    * click handler for submition to the server
    */
-  AddCommentServer = () => {
-    const {selectedBook, addCommentText, books} = this.state
-
+  AddCommentServer = value => {
+    const {selectedBook, books} = this.state
     if (selectedBook.id) {
-      if (
-        process.env.NODE_ENV === 'stories'
-      ) {
+      if (process.env.NODE_ENV === 'stories') {
         const {comments} = selectedBook
         const newdata = [
           ...comments,
-          {commentText: addCommentText, dateadded: new Date()}
+          {commentText: value, dateadded: new Date()}
         ]
         selectedBook.comments = newdata
         const bookpos = books.findIndex(x => x.id === selectedBook.id)
@@ -149,15 +127,17 @@ export class PersonalLibraryProvider extends Component {
                 : endpointRemote
             }/${selectedBook.id}`,
             {
-              comment: addCommentText
+              comment: value
             }
           )
           .then(result => {
             const {data} = result
             const {book} = data
-            selectedBook.comments = book.comments
-            const bookpos = books.findIndex(x => x.id === selectedBook.id)
-            books[bookpos] = selectedBook
+            const newBooks=books
+            const bookpos = newBooks.findIndex(x => x.id === book.id)
+            newBooks[bookpos] = book
+            this.setState({selectedBook:book,books:newBooks})
+           
           })
           .catch(err => {
             /* eslint-disable */
@@ -165,6 +145,7 @@ export class PersonalLibraryProvider extends Component {
             console.log(`error adding the comment to the book=>${err}`)
             console.log('====================================')
             /* eslint-enable */
+            this.setState({isError:true})
           })
       }
     }
@@ -176,9 +157,7 @@ export class PersonalLibraryProvider extends Component {
    * fat arrow function to get the data from the server
    */
   fetchData = () => {
-    if (
-      process.env.NODE_ENV === 'stories'
-    ) {
+    if (process.env.NODE_ENV === 'stories') {
       this.setState({books: dummyData, loading: false})
     } else {
       axios
@@ -187,7 +166,7 @@ export class PersonalLibraryProvider extends Component {
             process.env.NODE_ENV !== 'production'
               ? endpointLocal
               : endpointRemote
-          }`
+          }alldata`
         )
         .then(result => {
           const {data} = result
@@ -201,7 +180,6 @@ export class PersonalLibraryProvider extends Component {
               comments: item.comments
             }
           })
-
           this.setState({books: bookItems, loading: false})
         })
         .catch(err => {
@@ -222,10 +200,11 @@ export class PersonalLibraryProvider extends Component {
    */
   expandBookInfo = value => {
     const {books} = this.state
+    const newBooks=books
     const indexBook = books.findIndex(x => x.id === value)
-    if (indexBook) {
-      books[indexBook].expanded = !books[indexBook].expanded
-      this.setState({selectedBook: books[indexBook], addCommentText: ''})
+    if (indexBook>=0) {
+      newBooks[indexBook].expanded = !newBooks[indexBook].expanded
+      this.setState({selectedBook: newBooks[indexBook],books:newBooks})
     }
   }
   // #endregion
@@ -237,9 +216,7 @@ export class PersonalLibraryProvider extends Component {
   deleteSingleBook = () => {
     const {selectedBook} = this.state
     if (selectedBook.id) {
-      if (
-        process.env.NODE_ENV === 'stories' 
-      ) {
+      if (process.env.NODE_ENV === 'stories') {
         this.setState(prevState => ({
           books: prevState.books.filter(x => x.id !== selectedBook.id),
           selectedBook: {}
@@ -278,9 +255,7 @@ export class PersonalLibraryProvider extends Component {
    * fat arrow function to clear the book collection
    */
   deleteAllBooks = () => {
-    if (
-      process.env.NODE_ENV === 'stories' 
-    ) {
+    if (process.env.NODE_ENV === 'stories') {
       this.setState({books: [], selectedBook: {}})
     } else {
       axios
@@ -339,7 +314,6 @@ export class PersonalLibraryProvider extends Component {
           bookDelete: this.deleteSingleBook,
           BookAdd: this.addBookCollection,
           setBookName: this.addBookName,
-          addCommentText: this.setComment,
           changeDrawerStatus: this.changeDrawer,
           changeInfoDrawer: this.changeDrawerInfo
         }}>

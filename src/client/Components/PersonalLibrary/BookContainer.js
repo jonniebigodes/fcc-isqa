@@ -1,17 +1,26 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import BookList from './BookList'
-import BookDrawer from './BookDrawer'
 
+const LoadingRow = (
+  <div className="loading-item">
+    <span className="glow-checkbox" />
+    <span className="glow-text">
+      <span>Loading</span> <span>cool</span> <span>state</span>
+    </span>
+  </div>
+)
 
 class BookContainer extends Component {
   componentDidMount() {
-    const {getdata} = this.props
-    getdata()
+    setTimeout(() => {
+      const {getdata} = this.props
+      getdata()
+    }, 1000)
   }
 
   render() {
-    const {appError, BooksData} = this.props
+    const {appError, isloading} = this.props
     if (appError) {
       return (
         <div className="page lists-show">
@@ -23,6 +32,18 @@ class BookContainer extends Component {
         </div>
       )
     }
+    if (isloading) {
+      return (
+        <div className="list-items">
+          {LoadingRow}
+          {LoadingRow}
+          {LoadingRow}
+          {LoadingRow}
+          {LoadingRow}
+          {LoadingRow}
+        </div>
+      )
+    }
     return (
       <div className="page lists-show">
         <nav>
@@ -30,10 +51,7 @@ class BookContainer extends Component {
             <span className="title-wrapper">Book List</span>
           </h1>
         </nav>
-        <BookList Books={BooksData} />
-        <div>
-          <BookDrawer />
-        </div>
+        <BookList />
       </div>
     )
   }
@@ -41,22 +59,9 @@ class BookContainer extends Component {
 BookContainer.propTypes = {
   getdata: PropTypes.func,
   appError: PropTypes.bool,
-  BooksData: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string,
-      expanded: PropTypes.bool,
-      title: PropTypes.string,
-      comments: PropTypes.arrayOf(
-        PropTypes.shape({
-          commentText: PropTypes.string,
-          dateadded: PropTypes.instanceOf(Date)
-        })
-      )
-    })
-  )
+  isloading: PropTypes.bool
 }
 BookContainer.defaultProps = {
-  appError: false,
-  BooksData: []
+  appError: false
 }
 export default BookContainer

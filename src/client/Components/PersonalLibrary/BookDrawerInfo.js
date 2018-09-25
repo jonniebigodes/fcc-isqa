@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import {withStyles} from '@material-ui/core/styles'
 import Drawer from '@material-ui/core/Drawer'
 import Divider from '@material-ui/core/Divider'
-import Typography from '@material-ui/core/Typography';
+import Typography from '@material-ui/core/Typography'
 import BookEndpoints from './BookEndpoints'
 
 const styles = {

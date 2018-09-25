@@ -9,7 +9,7 @@ const Footer = () => (
         href="https://www.freecodecamp.com/jonniebigodes"
         target="_noopener"
         rel="nofollow"
-        style={{color:'white'}}>
+        style={{color: 'white'}}>
         Jonniebigodes
       </a>
     </div>
@@ -18,7 +18,8 @@ const Footer = () => (
       <a
         href="https://github.com/jonniebigodes/fcc-isqa"
         target="_noopener"
-        rel="nofollow" style={{color:'white'}}>
+        rel="nofollow"
+        style={{color: 'white'}}>
         Information Security and Quality Assurance Projects
       </a>
     </div>

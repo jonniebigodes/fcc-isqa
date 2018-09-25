@@ -26,25 +26,33 @@ const styles = theme => ({
       .spacing.unit * 3}px`
   },
   inputMessage: {
-    marginTop: theme.spacing.unit*2,
+    marginTop: theme.spacing.unit * 2
   }
 })
 
 const ConverterContainer = props => {
-  const {classes, metricError, metricErrorMessage,metricresult} = props
+  const {classes, metricError, metricErrorMessage, metricresult} = props
   return (
     <React.Fragment>
       <div className={classes.layout}>
         <Paper className={classes.paper}>
-          <Typography gutterBottom variant="headline" align="center" >
+          <Typography gutterBottom variant="headline" align="center">
             Super Duper Metric Converter
           </Typography>
           <Converter />
           <div className={classes.inputMessage}>
-              <Typography gutterBottom align="center" variant={metricError?"headline":"caption"}>
-                {metricError?metricErrorMessage:(metricresult.initUnit?JSON.stringify(metricresult):'')} {/*eslint-disable-line*/}
-              </Typography>
-            </div>
+            <Typography
+              gutterBottom
+              align="center"
+              variant={metricError ? 'headline' : 'caption'}>
+              {metricError
+                ? metricErrorMessage
+                : metricresult.initUnit
+                  ? JSON.stringify(metricresult)
+                  : ''}{' '}
+              {/*eslint-disable-line*/}
+            </Typography>
+          </div>
         </Paper>
       </div>
     </React.Fragment>
@@ -55,12 +63,12 @@ ConverterContainer.propTypes = {
   classes: PropTypes.shape({}),
   metricError: PropTypes.bool,
   metricErrorMessage: PropTypes.string,
-  metricresult:PropTypes.shape({
-    initUnit:PropTypes.string,
-    initNum:PropTypes.number,
-    returnNum:PropTypes.number,
-    returnUnit:PropTypes.string,
-    stringresult:PropTypes.string
+  metricresult: PropTypes.shape({
+    initUnit: PropTypes.string,
+    initNum: PropTypes.number,
+    returnNum: PropTypes.number,
+    returnUnit: PropTypes.string,
+    stringresult: PropTypes.string
   })
 }
 ConverterContainer.defaultProps = {

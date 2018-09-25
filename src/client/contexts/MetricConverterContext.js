@@ -23,31 +23,31 @@ export class MetricConvertProvider extends Component {
     const {convertInput} = this.state
     if (convertInput !== '') {
       axios
-          .get(
-            `${
-              process.env.NODE_ENV !== 'production'
-                ? localEndPoint
-                : remoteEndPoint
-            }?input=${convertInput}`
+        .get(
+          `${
+            process.env.NODE_ENV !== 'production'
+              ? localEndPoint
+              : remoteEndPoint
+          }?input=${convertInput}`
+        )
+        .then(result => {
+          this.setState(
+            typeof result.data === 'string'
+              ? {appError: true, appErrorMessage: result.data}
+              : {convertresult: result.data}
           )
-          .then(result => {
-            this.setState(
-              typeof result.data === 'string'
-                ? {appError: true, appErrorMessage: result.data}
-                : {convertresult: result.data}
-            )
+        })
+        .catch(err => {
+          /*eslint-disable */
+          console.log('====================================')
+          console.log(`error converting value=>${err}`)
+          console.log('====================================')
+          this.setState({
+            appError: true,
+            appErrorMessage: 'Something went bad...really bad'
           })
-          .catch(err => {
-            /*eslint-disable */
-            console.log('====================================')
-            console.log(`error converting value=>${err}`)
-            console.log('====================================')
-            this.setState({
-              appError: true,
-              appErrorMessage: 'Something went bad...really bad'
-            })
-            /* eslint-enable */
-          })
+          /* eslint-enable */
+        })
     }
   }
 
@@ -58,7 +58,7 @@ export class MetricConvertProvider extends Component {
           ...this.state,
           addInput: this.setInput,
           convert: this.makeConversion,
-          addInputConvert:this.setInput
+          addInputConvert: this.setInput
         }}>
         {this.props.children} {/*eslint-disable-line*/}
       </MetricConverterContext.Provider>

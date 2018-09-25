@@ -13,22 +13,21 @@ const styles = {
   }
 }
 const BookDrawer = props => {
-  const {classes,bookaddVisibility,bookaddOpen} = props
+  const {classes, bookaddVisibility, bookaddOpen} = props
   return (
     <Drawer
-          anchor="bottom"
-          open={bookaddOpen}
-          onClose={() => bookaddVisibility()}>
-          <div className={classes.fullList}>
-            <BookAdd />
-          </div>
-        </Drawer>
-
+      anchor="bottom"
+      open={bookaddOpen}
+      onClose={() => bookaddVisibility()}>
+      <div className={classes.fullList}>
+        <BookAdd />
+      </div>
+    </Drawer>
   )
 }
 BookDrawer.propTypes = {
   classes: PropTypes.shape({}),
-  bookaddOpen:PropTypes.bool,
-  bookaddVisibility:PropTypes.func
+  bookaddOpen: PropTypes.bool,
+  bookaddVisibility: PropTypes.func
 }
 export default withStyles(styles)(BookDrawer)
