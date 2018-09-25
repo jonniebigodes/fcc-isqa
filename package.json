@@ -25,7 +25,7 @@
     "buildmodels": "npx babel ./src/server/models/ --out-dir ./lib --presets minify",
     "buildcontrollers": "npx babel ./src/server/controllers/ --out-dir ./lib --presets minify",
     "buildserverdeps": "npm run buildserver && npm run buildlogger && npm run buildmodels && npm run buildcontrollers",
-    "buildclient": "parcel build index.html --public-url ./",
+    "buildclient": "parcel build ./src/client/index.html --public-url ./",
     "postinstall": "npm run buildserverdeps && npm run buildclient",
     "start": "node ./lib/server.bundle.js"
   },
