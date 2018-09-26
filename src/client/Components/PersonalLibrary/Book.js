@@ -17,8 +17,6 @@ import uuid from 'uuid'
 
 const styles = theme => ({
   root: {
-    // paddingTop: theme.spacing.unit * 4,
-    // paddingBottom: theme.spacing.unit * 4,
     width: '100%',
     height: '100%'
   },
@@ -58,7 +56,8 @@ const styles = theme => ({
     overflow: 'hidden',
     flex: 1,
     textOverflow: 'ellipsis'
-  }
+  },
+  
 })
 
 class Book extends Component {
@@ -67,23 +66,7 @@ class Book extends Component {
     bookComment:''
   }
 
-  /* shouldComponentUpdate(nextProps){
-    const {bookdata}= this.props
-    const {expanded,comments}= bookdata
-    const nextBook=nextProps.bookdata
-    const nextExpanded=nextBook.expanded
-    const nextComments=nextBook.comments
-
-    console.log('====================================');
-    console.log(`props expanded=>${expanded} next props expanded=>${nextExpanded}`);
-    console.log(`props comments=>${comments.length} next props comments=>${nextComments.length}`);
-    console.log('====================================');
-    if (comments.length!==nextComments.length){
-      return true
-    }
-    return false
-  } */
-  
+ 
   onDeleteHandler = () => {
     const {DeleteBook} = this.props
     DeleteBook()
@@ -153,7 +136,7 @@ class Book extends Component {
             
             {comments.map(item => (
               <ListItem key={`comment_${uuid.v4()}`}>
-                <ListItemText primary={item.commentText} secondary={`on: ${new Date(item.dateadded)}`} />
+                <ListItemText primary={item.commentText} secondary={`on: ${new Date(item.dateadded)}`} style={{color:'#FFFFFF'}} />
               </ListItem>
             ))}
           </List>}

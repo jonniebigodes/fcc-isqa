@@ -31,12 +31,6 @@ const styles = theme => ({
     fontSize: 32
   },
   righticon: {
-    /*  position:'absolute',
-    marginTop:theme.spacing.unit*2,
-    right:'30px',
-    '-webkit-transform': 'translateY(-50%)',
-    '-ms-transform': 'translateY(-50%)',
-     'transform': 'translateY(-50%)', */
     fontSize: 32
   }
 })

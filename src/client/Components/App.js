@@ -10,6 +10,16 @@ import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Paper from '@material-ui/core/Paper'
 
+const AppTableCell = withStyles(theme => ({
+  head: {
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.common.white,
+  },
+  body: {
+    fontSize: 14,
+  },
+}))(TableCell);
+
 const styles = theme => ({
   root: {
     width: '100%',
@@ -30,9 +40,9 @@ const App = props => {
         <Table className={classes.table}>
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Description</TableCell>
-              <TableCell>Location</TableCell>
+              <AppTableCell>Name</AppTableCell>
+              <AppTableCell>Description</AppTableCell>
+              <AppTableCell>Location</AppTableCell>
             </TableRow>
           </TableHead>
           <TableBody>

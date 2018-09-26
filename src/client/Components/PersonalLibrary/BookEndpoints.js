@@ -9,6 +9,16 @@ import TableRow from '@material-ui/core/TableRow'
 import Paper from '@material-ui/core/Paper'
 import {withStyles} from '@material-ui/core/styles'
 
+const EndpointTableCell = withStyles(theme => ({
+  head: {
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.common.white,
+  },
+  body: {
+    fontSize: 14,
+  },
+}))(TableCell);
+
 const styles = theme => ({
   root: {
     width: '100%',
@@ -27,10 +37,10 @@ const BookEndpoints = props => {
         <Table className={classes.table}>
           <TableHead>
             <TableRow>
-              <TableCell>API</TableCell>
-              <TableCell>GET</TableCell>
-              <TableCell>POST</TableCell>
-              <TableCell>DELETE</TableCell>
+              <EndpointTableCell>API</EndpointTableCell>
+              <EndpointTableCell>GET</EndpointTableCell>
+              <EndpointTableCell>POST</EndpointTableCell>
+              <EndpointTableCell>DELETE</EndpointTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
