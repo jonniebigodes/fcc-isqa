@@ -81,9 +81,18 @@ IssueTrackerController.use(async (req, res, next) => {
 
 IssueTrackerController.get('/icache', async (req, res) => {
   const itemscache = Cache.keys().filter(item => item.startsWith('issue_'))
+  const result= itemscache.map(item=>{
+    const data=Cache.get(item)
+    const projectid=item.slice(item.indexOf('_')+1)
+    return {
+      id:projectid,
+      title:data.cachedtitle,
+      creationdate:data.cachedate,
+      issues:data.cachedissues
+  }})
   return res
     .status(200)
-    .json({issuesdata: itemscache.map(item => Cache.get(item))})
+    .json({issuesdata:result})
 })
 // #endregion
 
