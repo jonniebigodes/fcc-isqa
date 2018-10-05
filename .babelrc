@@ -3,7 +3,7 @@
     "plugins": [
       "transform-object-rest-spread",
       "transform-class-properties",
-      "dynamic-import-node",
+      "syntax-dynamic-import",
       "transform-react-constant-elements"
     ]
   }
