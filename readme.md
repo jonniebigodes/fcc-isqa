@@ -4,11 +4,11 @@ This repository contains the implementation of the Information Security and Qual
 
 
 The challenges are the following
-  - Metric-Imperial Converter
-  - Issue Tracker
-  - Personal Library
-  - Stock Price Checker
-  - Anonymous Message Board
+  - [Metric-Imperial Converter](https://fcc-isqa.herokuapp.com/metrics)
+  - [Issue Tracker](https://fcc-isqa.herokuapp.com/issuetracker)
+  - [Personal Library](https://fcc-isqa.herokuapp.com/books)
+  - [Stock Price Checker](https://fcc-isqa.herokuapp.com/stockdata)
+  - [Anonymous Message Board](https://fcc-isqa.herokuapp.com/messageboards)
 
 # Methodology used
 
