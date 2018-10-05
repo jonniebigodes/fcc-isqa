@@ -153,17 +153,17 @@ describe('Testing issues', () => {
               done(err)
             }
             const {body} = res
-            const {data} = body
+            const {newIssue} = body
             res.should.have.status(201)
-            data.should.have
+            newIssue.should.have
               .property('issue_title')
               .eql('dummyissueproject4issue1')
-            data.should.have
+            newIssue.should.have
               .property('issue_text')
               .eql('dummyissueproject4issue1 test')
-            data.should.have.property('created_by').eql('p4')
-            data.should.have.property('assigned').eql('p4')
-            data.should.have.property('status_text').eql('tbdadmin4')
+            newIssue.should.have.property('created_by').eql('p4')
+            newIssue.should.have.property('assigned').eql('p4')
+            newIssue.should.have.property('status_text').eql('tbdadmin4')
             done()
           })
       })
@@ -183,20 +183,20 @@ describe('Testing issues', () => {
               done(err)
             }
             const {body} = res
-            const {data} = body
+            const {newIssue} = body
             /* eslint-disable */
-            issueIdentifier = data._id
+            issueIdentifier = newIssue._id
             /* eslint-enable */
             res.should.have.status(201)
-            data.should.have
+            newIssue.should.have
               .property('issue_title')
               .eql('dummyissueproject4issue2')
-            data.should.have
+            newIssue.should.have
               .property('issue_text')
               .eql('dummyissueproject4issue2 test')
-            data.should.have.property('created_by').eql('p42')
-            data.should.have.property('assigned').eql('p42')
-            data.should.have.property('status_text').eql('tbdadmin42')
+            newIssue.should.have.property('created_by').eql('p42')
+            newIssue.should.have.property('assigned').eql('p42')
+            newIssue.should.have.property('status_text').eql('tbdadmin42')
             done()
           })
       })

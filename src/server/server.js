@@ -7,6 +7,7 @@ import compression from 'compression'
 import mongoose from 'mongoose'
 import logger from './logger'
 
+/* eslint-disable */
 const DataConversionController =
   process.env.NODE_ENV !== 'production'
     ? require('./controllers/DataConverter').default
@@ -15,7 +16,7 @@ const PersonalLibraryController =
   process.env.NODE_ENV !== 'production'
     ? require('./controllers/PersonalLibrary').default
     : require('./PersonalLibrary').default
-    
+
 const PriceCheckerController =
   process.env.NODE_ENV !== 'production'
     ? require('./controllers/PriceChecker').default
@@ -48,6 +49,7 @@ const MultiplePriceCheckerController =
   process.env.NODE_ENV !== 'production'
     ? require('./controllers/MultiplePriceChecker').default
     : require('./MultiplePriceChecker').default
+/* eslint-enable */
 
 const app = express()
 
