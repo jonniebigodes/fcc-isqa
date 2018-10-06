@@ -45,39 +45,39 @@ PersonalLibraryController.route('/pcache').get(async (req, res) => {
   return res.status(200).json({data: itemscache.map(item => Cache.get(item))})
 })
 // #region getalldata
-PersonalLibraryController.route('/alldata').get(async (req,res)=>{
+PersonalLibraryController.route('/alldata').get(async (req, res) => {
   try {
     const itemscache = Cache.keys().filter(item => item.startsWith('personal_'))
-    if(itemscache.length===0){
-       // get data from db
-       const datacontent = await contentLibrary.find({})
+    if (itemscache.length === 0) {
+      // get data from db
+      const datacontent = await contentLibrary.find({})
 
-       /* eslint-disable  */
-       datacontent.map(item =>
-         Cache.put(
-           `personal_${item._id}`,
-           {
-             id: item._id,
-             title: item.title,
-             comments: item.comments
-           },
-           18000000
-         )
-       )
-       return res.status(200).json({
-         bookdata: datacontent.map(item => {
-           return {
-             id: item._id,
-             title: item.title,
-             comments: item.comments
-           }
-         })
-       })
-       /* eslint-enable  */
+      /* eslint-disable  */
+      datacontent.map(item =>
+        Cache.put(
+          `personal_${item._id}`,
+          {
+            id: item._id,
+            title: item.title,
+            comments: item.comments
+          },
+          18000000
+        )
+      )
+      return res.status(200).json({
+        bookdata: datacontent.map(item => {
+          return {
+            id: item._id,
+            title: item.title,
+            comments: item.comments
+          }
+        })
+      })
+      /* eslint-enable  */
     }
     return res
-        .status(200)
-        .json({bookdata: itemscache.map(item => Cache.get(item))})
+      .status(200)
+      .json({bookdata: itemscache.map(item => Cache.get(item))})
   } catch (error) {
     logger.info(`PersonalLibraryController remove book error: ${error}`)
     return res.status(500).json({message: 'Something really bad happened'})
@@ -340,6 +340,5 @@ PersonalLibraryController.route('/:bookid')
     }
   )
 // #endregion
-
 
 export default PersonalLibraryController

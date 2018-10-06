@@ -338,14 +338,15 @@ IssueTrackerController.route('/:project')
         if (!errors.isEmpty()) {
           return res.status(422).json({errors: errors.array()})
         }
+
+        if (Object.keys(req.body).length === 0) {
+          return res.status(422).json({message: 'no updated field sent'})
+        }
         const projectinfo = await issueprojectmodel.findById(req.params.project)
         if (!projectinfo) {
           return res
             .status(422)
             .json({message: 'provided project does not exist'})
-        }
-        if (Object.keys(req.body).length === 0) {
-          return res.status(422).json({message: 'no updated field sent'})
         }
 
         const updateobj = {
