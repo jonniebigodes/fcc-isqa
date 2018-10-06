@@ -12,12 +12,12 @@ import {withStyles} from '@material-ui/core/styles'
 const EndpointTableCell = withStyles(theme => ({
   head: {
     backgroundColor: theme.palette.primary.main,
-    color: theme.palette.common.white,
+    color: theme.palette.common.white
   },
   body: {
-    fontSize: 14,
-  },
-}))(TableCell);
+    fontSize: 14
+  }
+}))(TableCell)
 
 const styles = theme => ({
   root: {

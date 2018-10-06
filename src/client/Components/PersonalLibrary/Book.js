@@ -22,7 +22,7 @@ const styles = theme => ({
   },
   list: {
     padding: theme.spacing.unit,
-    width:'100%',
+    width: '100%'
   },
   button: {
     margin: theme.spacing.unit
@@ -56,25 +56,21 @@ const styles = theme => ({
     overflow: 'hidden',
     flex: 1,
     textOverflow: 'ellipsis'
-  },
-  
+  }
 })
 
 class Book extends Component {
-
-  state={
-    bookComment:''
+  state = {
+    bookComment: ''
   }
 
- 
   onDeleteHandler = () => {
     const {DeleteBook} = this.props
     DeleteBook()
   }
 
-  onChangeHandler=event=>{
-    
-    this.setState({bookComment:event.target.value})
+  onChangeHandler = event => {
+    this.setState({bookComment: event.target.value})
   }
 
   onExpandHandler = () => {
@@ -84,18 +80,17 @@ class Book extends Component {
 
   onCommentAdd = () => {
     const {AddBookComment} = this.props
-    const {bookComment}= this.state
+    const {bookComment} = this.state
 
-    if (bookComment!==''){
+    if (bookComment !== '') {
       AddBookComment(bookComment)
     }
-    
   }
 
   render() {
     const {bookdata, classes} = this.props
-    const {expanded, title,comments} = bookdata
-    const {bookComment}= this.state;
+    const {expanded, title, comments} = bookdata
+    const {bookComment} = this.state
     if (expanded) {
       return (
         <div className={classes.listitem}>
@@ -115,7 +110,7 @@ class Book extends Component {
           </div>
           <div className={classes.title}>
             <Typography component="p" gutterBottom>
-            {`Comments: ${comments.length}`}
+              {`Comments: ${comments.length}`}
             </Typography>
           </div>
 
@@ -132,15 +127,22 @@ class Book extends Component {
           <div className={classes.root}>
             <Divider />
             {/* eslint-disable */}
-            {comments.length===0?<div></div>:<List component="nav" className={classes.list}>
-            
-            {comments.map(item => (
-              <ListItem key={`comment_${uuid.v4()}`}>
-                <ListItemText primary={item.commentText} secondary={`on: ${new Date(item.dateadded)}`} style={{color:'#FFFFFF'}} />
-              </ListItem>
-            ))}
-          </List>}
-            
+            {comments.length === 0 ? (
+              <div />
+            ) : (
+              <List component="nav" className={classes.list}>
+                {comments.map(item => (
+                  <ListItem key={`comment_${uuid.v4()}`}>
+                    <ListItemText
+                      primary={item.commentText}
+                      secondary={`on: ${new Date(item.dateadded)}`}
+                      
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            )}
+
             {/* eslint-enable */}
             <Divider />
             <div className={classes.container}>
@@ -182,7 +184,7 @@ class Book extends Component {
 
         <div className={classes.title}>
           <Typography component="p" gutterBottom>
-          {`Comments: ${comments.length}`}
+            {`Comments: ${comments.length}`}
           </Typography>
         </div>
 

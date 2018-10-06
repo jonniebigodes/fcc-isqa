@@ -3,7 +3,6 @@ import {storiesOf, action} from '@storybook/react' // eslint-disable-line
 import BookContainer from './BookContainer'
 import {PersonalLibraryProvider} from '../../contexts/PersonalLibraryContext'
 
-
 export const actions = {
   getdata: action('getdata')
 }

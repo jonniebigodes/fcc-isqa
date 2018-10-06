@@ -1,9 +1,11 @@
 import React from 'react'
 import Helmet from 'react-helmet'
-import PropTypes from 'prop-types'
 import Grid from '@material-ui/core/Grid'
 import Tooltip from '@material-ui/core/Tooltip'
-import {withStyles} from '@material-ui/core/styles'
+import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles'
+import CssBaseline from '@material-ui/core/CssBaseline'
+import green from '@material-ui/core/colors/green'
+import lime from '@material-ui/core/colors/lime'
 import ContactSupport from '@material-ui/icons/ContactSupport'
 import NoteAdd from '@material-ui/icons/NoteAdd'
 import BookContainer from './BookContainer'
@@ -15,28 +17,17 @@ import {
 import BookDrawerInfo from './BookDrawerInfo'
 import BookDrawer from './BookDrawer'
 
-const styles = theme => ({
-  root: {
-    padding: theme.spacing.unit
-  },
-  buttonInfo: {
-    zIndex: 1,
-    width: 36,
-    height: 36,
-    margin: theme.spacing.unit,
-    border: '3px solid #73AD21'
-  },
-  icon: {
-    margin: '0 auto',
-    fontSize: 32
-  },
-  righticon: {
-    fontSize: 32
+const theme = createMuiTheme({
+  palette: {
+    primary: green,
+    secondary: lime,
+    contrastThreshold: 3,
+    tonalOffset: 0.2
   }
 })
 
-const BookApp = props => {
-  const {classes} = props
+const BookApp = () => {
+
   return (
     <div>
       <Helmet
@@ -52,7 +43,9 @@ const BookApp = props => {
           }
         ]}
       />
-      <PersonalLibraryProvider>
+      <MuiThemeProvider theme={theme}>
+        <CssBaseline />
+        <PersonalLibraryProvider>
         <PersonalLibraryContext.Consumer>
           {({
             getLibraryData,
@@ -63,58 +56,55 @@ const BookApp = props => {
             changeDrawerStatus,
             loading
           }) => (
-            <div>
-              <BookDrawerInfo
-                onInfoOpen={changeInfoDrawer}
-                infoOpen={drawerInfoOpen}
-              />
-              <div>
-                <BookDrawer
-                  bookaddOpen={drawerOpen}
-                  bookaddVisibility={changeDrawerStatus}
-                />
-              </div>
-              <div className={classes.root}>
+            
+              <Grid
+                container
+                spacing={16}>
+                <Grid item xs={12}>
                 <BookContainer
                   appError={isError}
                   getdata={getLibraryData}
                   isloading={loading}
                 />
-              </div>
-              <Grid
-                container
-                spacing={8}
-                alignItems="center"
-                justify="flex-end">
-                <Grid item xs={8}>
+                </Grid>
+                <Grid item xs={6}>
                   <div>
                     <Tooltip title="Show endpoints">
                       <ContactSupport
-                        className={classes.icon}
+                        style={{ margin: '0 auto',fontSize:32}}
                         onClick={() => changeInfoDrawer()}
                       />
                     </Tooltip>
                   </div>
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={6}>
                   <div>
                     <Tooltip title="Click me to add book">
                       <NoteAdd
-                        className={classes.righticon}
+                        style={{fontSize:32}}
                         onClick={() => changeDrawerStatus()}
                       />
                     </Tooltip>
                   </div>
                 </Grid>
+                <Grid item xs={12}>
+                  <BookDrawerInfo
+                  onInfoOpen={changeInfoDrawer}
+                  infoOpen={drawerInfoOpen}
+                />
+                <BookDrawer
+                  bookaddOpen={drawerOpen}
+                  bookaddVisibility={changeDrawerStatus}
+                />
+                </Grid>
               </Grid>
-            </div>
           )}
         </PersonalLibraryContext.Consumer>
       </PersonalLibraryProvider>
+      </MuiThemeProvider>
+      
     </div>
   )
 }
-BookApp.propTypes = {
-  classes: PropTypes.shape({})
-}
-export default withStyles(styles)(BookApp)
+
+export default BookApp

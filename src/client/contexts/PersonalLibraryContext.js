@@ -17,10 +17,8 @@ export class PersonalLibraryProvider extends Component {
     loading: true,
     drawerOpen: false,
     drawerInfoOpen: false
-    
   }
   // #endregion
-
 
   // #region addbookname
   /**
@@ -37,7 +35,6 @@ export class PersonalLibraryProvider extends Component {
    * fat arrow function to inject the book in the collection
    */
   addBookCollection = () => {
-    
     const {bookName} = this.state
     if (bookName !== '') {
       if (process.env.NODE_ENV === 'stories') {
@@ -133,11 +130,10 @@ export class PersonalLibraryProvider extends Component {
           .then(result => {
             const {data} = result
             const {book} = data
-            const newBooks=books
+            const newBooks = books
             const bookpos = newBooks.findIndex(x => x.id === book.id)
             newBooks[bookpos] = book
-            this.setState({selectedBook:book,books:newBooks})
-           
+            this.setState({selectedBook: book, books: newBooks})
           })
           .catch(err => {
             /* eslint-disable */
@@ -145,7 +141,7 @@ export class PersonalLibraryProvider extends Component {
             console.log(`error adding the comment to the book=>${err}`)
             console.log('====================================')
             /* eslint-enable */
-            this.setState({isError:true})
+            this.setState({isError: true})
           })
       }
     }
@@ -200,11 +196,11 @@ export class PersonalLibraryProvider extends Component {
    */
   expandBookInfo = value => {
     const {books} = this.state
-    const newBooks=books
+    const newBooks = books
     const indexBook = books.findIndex(x => x.id === value)
-    if (indexBook>=0) {
+    if (indexBook >= 0) {
       newBooks[indexBook].expanded = !newBooks[indexBook].expanded
-      this.setState({selectedBook: newBooks[indexBook],books:newBooks})
+      this.setState({selectedBook: newBooks[indexBook], books: newBooks})
     }
   }
   // #endregion

@@ -1,5 +1,8 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
+import AppBar from '@material-ui/core/AppBar'
+import Toolbar from '@material-ui/core/Toolbar'
+import Typography from '@material-ui/core/Typography'
 import BookList from './BookList'
 
 const LoadingRow = (
@@ -46,11 +49,13 @@ class BookContainer extends Component {
     }
     return (
       <div className="page lists-show">
-        <nav>
-          <h1 className="title-page">
-            <span className="title-wrapper">Book List</span>
-          </h1>
-        </nav>
+        <AppBar position="static" color="primary">
+          <Toolbar>
+            <Typography variant="title" color="inherit">
+              Book List
+            </Typography>
+          </Toolbar>
+        </AppBar>
         <BookList />
       </div>
     )
