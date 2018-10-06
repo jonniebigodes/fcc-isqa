@@ -1,24 +1,29 @@
 import React from 'react'
 import Helmet from 'react-helmet'
-import PropTypes from 'prop-types'
-import {withStyles} from '@material-ui/core/styles'
+
+import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles'
+import CssBaseline from '@material-ui/core/CssBaseline'
+import green from '@material-ui/core/colors/green'
+import lime from '@material-ui/core/colors/lime'
+
 import {
   MetricConvertProvider,
   MetricConverterContext
 } from '../../contexts/MetricConverterContext'
 import ConverterContainer from './ConverterContainer'
 
-const styles = theme => ({
-  root: {
-    height: 410,
-    marginLeft: 'auto',
-    marginRight: 'auto'
+const theme = createMuiTheme({
+  palette: {
+    primary: green,
+    secondary: lime,
+    contrastThreshold: 3,
+    tonalOffset: 0.2
   }
 })
-const MetricConverterApp = props => {
-  const {classes} = props
+
+const MetricConverterApp = () => {
   return (
-    <div className={classes.root}>
+    <div style={{height: 410, marginLeft: 'auto', marginRight: 'auto'}}>
       <Helmet
         title="Super Duper Metric Converter"
         meta={[
@@ -32,22 +37,23 @@ const MetricConverterApp = props => {
           }
         ]}
       />
-      <MetricConvertProvider>
-        <MetricConverterContext.Consumer>
-          {({isloading, appError, appErrorMessage, convertresult}) => (
-            <ConverterContainer
-              loading={isloading}
-              metricError={appError}
-              metricErrorMessage={appErrorMessage}
-              metricresult={convertresult}
-            />
-          )}
-        </MetricConverterContext.Consumer>
-      </MetricConvertProvider>
+      <MuiThemeProvider theme={theme}>
+        <CssBaseline />
+        <MetricConvertProvider>
+          <MetricConverterContext.Consumer>
+            {({isloading, appError, appErrorMessage, convertresult}) => (
+              <ConverterContainer
+                loading={isloading}
+                metricError={appError}
+                metricErrorMessage={appErrorMessage}
+                metricresult={convertresult}
+              />
+            )}
+          </MetricConverterContext.Consumer>
+        </MetricConvertProvider>
+      </MuiThemeProvider>
     </div>
   )
 }
-MetricConverterApp.propTypes = {
-  classes: PropTypes.object //eslint-disable-line
-}
-export default withStyles(styles)(MetricConverterApp)
+
+export default MetricConverterApp
