@@ -924,7 +924,7 @@
  .list-items {
    position: relative;
    background: white;
-   min-height: 288px;
+   height: 400px;
  }
  .list-items .select-placeholder {
    border: none;

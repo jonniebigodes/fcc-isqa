@@ -1,23 +1,10 @@
 import React from 'react'
 import {render} from 'react-dom'
-import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles'
-import CssBaseline from '@material-ui/core/CssBaseline'
-import green from '@material-ui/core/colors/green'
-import lime from '@material-ui/core/colors/lime'
 import Loadable from 'react-loadable'
 import {BrowserRouter, Switch, Route} from 'react-router-dom'
 import UrlNotFound from './Components/UrlNotFound'
 import Loader from './Components/Loader/Loader'
 import Template from './Template/index'
-
-const theme = createMuiTheme({
-  palette: {
-    primary: green,
-    secondary: lime,
-    contrastThreshold: 3,
-    tonalOffset: 0.2
-  }
-})
 
 const Personal = Loadable({
   loader: () => import('./Components/PersonalLibrary/BookApp'),
@@ -43,6 +30,7 @@ const IssueTrack = Loadable({
   delay: 300,
   timeout: 20000
 })
+
 const Stocks = Loadable({
   loader: () => import('./Components/StockSearcher/StockApp'),
   loading: Loader,
@@ -57,9 +45,7 @@ const Home = Loadable({
 })
 
 render(
-  <MuiThemeProvider theme={theme}>
-    <CssBaseline />
-    <BrowserRouter>
+  <BrowserRouter>
       <Template>
         <Switch>
           <Route path="/" exact component={Home} />
@@ -71,8 +57,7 @@ render(
           <Route component={UrlNotFound} />
         </Switch>
       </Template>
-    </BrowserRouter>
-  </MuiThemeProvider>,
+    </BrowserRouter>,
   document.getElementById('root')
 )
 if (module.hot) {

@@ -2,7 +2,10 @@ import React from 'react'
 import {Link} from 'react-router-dom'
 import PropTypes from 'prop-types'
 import uuid from 'uuid'
-import {withStyles} from '@material-ui/core/styles'
+import {MuiThemeProvider, createMuiTheme,withStyles} from '@material-ui/core/styles'
+import CssBaseline from '@material-ui/core/CssBaseline'
+import green from '@material-ui/core/colors/green'
+import lime from '@material-ui/core/colors/lime'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
@@ -10,34 +13,34 @@ import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Paper from '@material-ui/core/Paper'
 
-const AppTableCell = withStyles(theme => ({
-  head: {
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.common.white,
-  },
-  body: {
-    fontSize: 14,
-  },
-}))(TableCell);
-
-const styles = theme => ({
-  root: {
-    width: '100%',
-    marginTop: theme.spacing.unit * 3,
-    overflowX: 'auto'
-  },
-  table: {
-    minWidth: 700,
-    minHeight: 450
+const theme = createMuiTheme({
+  palette: {
+    primary: green,
+    secondary: lime,
+    contrastThreshold: 3,
+    tonalOffset: 0.2
   }
 })
 
-const App = props => {
-  const {classes} = props
+const AppTableCell = withStyles(theme => ({
+  head: {
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.common.white
+  },
+  body: {
+    fontSize: 14
+  }
+}))(TableCell)
+
+
+
+const App = () => {
   return (
-    <div>
-      <Paper className={classes.root}>
-        <Table className={classes.table}>
+    <MuiThemeProvider theme={theme}>
+      <CssBaseline />
+      <div>
+      <Paper style={{width:'100%',marginTop:24,overflowX:'auto'}}>
+        <Table style={{minWidth:'700px',minHeight:'450px'}}>
           <TableHead>
             <TableRow>
               <AppTableCell>Name</AppTableCell>
@@ -96,9 +99,11 @@ const App = props => {
         </Table>
       </Paper>
     </div>
+    </MuiThemeProvider>
+    
   )
 }
 App.propTypes = {
   classes: PropTypes.shape({})
 }
-export default withStyles(styles)(App)
+export default App
