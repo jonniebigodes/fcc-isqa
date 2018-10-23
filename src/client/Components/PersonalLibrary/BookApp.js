@@ -27,7 +27,6 @@ const theme = createMuiTheme({
 })
 
 const BookApp = () => {
-
   return (
     <div>
       <Helmet
@@ -46,32 +45,29 @@ const BookApp = () => {
       <MuiThemeProvider theme={theme}>
         <CssBaseline />
         <PersonalLibraryProvider>
-        <PersonalLibraryContext.Consumer>
-          {({
-            getLibraryData,
-            isError,
-            changeInfoDrawer,
-            drawerInfoOpen,
-            drawerOpen,
-            changeDrawerStatus,
-            loading
-          }) => (
-            
-              <Grid
-                container
-                spacing={16}>
+          <PersonalLibraryContext.Consumer>
+            {({
+              getLibraryData,
+              isError,
+              changeInfoDrawer,
+              drawerInfoOpen,
+              drawerOpen,
+              changeDrawerStatus,
+              loading
+            }) => (
+              <Grid container spacing={16}>
                 <Grid item xs={12}>
-                <BookContainer
-                  appError={isError}
-                  getdata={getLibraryData}
-                  isloading={loading}
-                />
+                  <BookContainer
+                    appError={isError}
+                    getdata={getLibraryData}
+                    isloading={loading}
+                  />
                 </Grid>
                 <Grid item xs={6}>
                   <div>
                     <Tooltip title="Show endpoints">
                       <ContactSupport
-                        style={{ margin: '0 auto',fontSize:32}}
+                        style={{margin: '0 auto', fontSize: 32}}
                         onClick={() => changeInfoDrawer()}
                       />
                     </Tooltip>
@@ -81,7 +77,7 @@ const BookApp = () => {
                   <div>
                     <Tooltip title="Click me to add book">
                       <NoteAdd
-                        style={{fontSize:32}}
+                        style={{fontSize: 32}}
                         onClick={() => changeDrawerStatus()}
                       />
                     </Tooltip>
@@ -89,20 +85,19 @@ const BookApp = () => {
                 </Grid>
                 <Grid item xs={12}>
                   <BookDrawerInfo
-                  onInfoOpen={changeInfoDrawer}
-                  infoOpen={drawerInfoOpen}
-                />
-                <BookDrawer
-                  bookaddOpen={drawerOpen}
-                  bookaddVisibility={changeDrawerStatus}
-                />
+                    onInfoOpen={changeInfoDrawer}
+                    infoOpen={drawerInfoOpen}
+                  />
+                  <BookDrawer
+                    bookaddOpen={drawerOpen}
+                    bookaddVisibility={changeDrawerStatus}
+                  />
                 </Grid>
               </Grid>
-          )}
-        </PersonalLibraryContext.Consumer>
-      </PersonalLibraryProvider>
+            )}
+          </PersonalLibraryContext.Consumer>
+        </PersonalLibraryProvider>
       </MuiThemeProvider>
-      
     </div>
   )
 }

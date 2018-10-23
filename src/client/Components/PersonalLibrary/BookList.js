@@ -2,16 +2,15 @@ import React from 'react'
 import Book from './Book'
 import {PersonalLibraryContext} from '../../contexts/PersonalLibraryContext'
 
-
-
 const BookList = () => {
   return (
     <PersonalLibraryContext.Consumer>
       {({books, expandBook, bookDelete, CommentAdd}) => (
-        <div style={{
-          background:'white',
-          minHeight:'288px'
-        }}>
+        <div
+          style={{
+            background: 'white',
+            minHeight: '288px'
+          }}>
           {books.map(book => (
             <Book
               key={book.id}

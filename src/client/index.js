@@ -46,18 +46,18 @@ const Home = Loadable({
 
 render(
   <BrowserRouter>
-      <Template>
-        <Switch>
-          <Route path="/" exact component={Home} />
-          <Route path="/books" exact component={Personal} />
-          <Route path="/issuetracker" exact component={IssueTrack} />
-          <Route path="/messageboards" exact component={Messages} />
-          <Route path="/metrics" exact component={Metric} />
-          <Route path="/stockdata" exact component={Stocks} />
-          <Route component={UrlNotFound} />
-        </Switch>
-      </Template>
-    </BrowserRouter>,
+    <Template>
+      <Switch>
+        <Route path="/" exact component={Home} />
+        <Route path="/books" exact component={Personal} />
+        <Route path="/issuetracker" exact component={IssueTrack} />
+        <Route path="/messageboards" exact component={Messages} />
+        <Route path="/metrics" exact component={Metric} />
+        <Route path="/stockdata" exact component={Stocks} />
+        <Route component={UrlNotFound} />
+      </Switch>
+    </Template>
+  </BrowserRouter>,
   document.getElementById('root')
 )
 if (module.hot) {

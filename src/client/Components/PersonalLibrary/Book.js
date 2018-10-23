@@ -136,7 +136,6 @@ class Book extends Component {
                     <ListItemText
                       primary={item.commentText}
                       secondary={`on: ${new Date(item.dateadded)}`}
-                      
                     />
                   </ListItem>
                 ))}
