@@ -18,16 +18,20 @@ const StockModel =
 const dataModel = mongoose.model('stock')
 /* eslint-enable */
 // #endregion
+
 const MultiplePriceCheckerController = express.Router()
 const endPoint = 'https://www.quandl.com/api/v3/datasets/WIKI/'
 
 // #region middleware
 MultiplePriceCheckerController.use((req, res, next) => {
-  logger.info(
-    `nasdaq multiple date=>${new Date()}\n method=>${
-      req.method
-    }\n url=>${JSON.stringify(req.query)}\nsender:${req.ip}`
-  )
+  if (process.env.NODE_ENV !== 'test') {
+    logger.info(
+      `nasdaq multiple date=>${new Date()}\n method=>${
+        req.method
+      }\n url=>${JSON.stringify(req.query)}\nsender:${req.ip}`
+    )
+  }
+
   next() // make sure we go to the next routes and don't stop here
 })
 // #endregion
@@ -68,8 +72,8 @@ const fetchMultiple = (firstticker, secondticker) => {
           const quandldataOne = priceinfoone.data.dataset.data[0]
           const quandldataTwo = priceinfotwo.data.dataset.data[0]
           resolve({
-            priceOne: quandldataOne[4],
-            priceTwo: quandldataTwo[4]
+            firstTickerPrice: quandldataOne[4],
+            secondTickerPrice: quandldataTwo[4]
           })
         })
       )
@@ -108,233 +112,198 @@ const fetchSingle = async value => {
 }
 // #endregion
 
-// #region cacheItems
-/**
- * async fat arrow function to handle caching of multiple items
- * @param {Object} value object containing both items to be cached
- */
-const cacheMultipleItems = async value => {
-  try {
-    const {itemOne, itemTwo} = value
-    const firsttickerincache = Cache.get(`stock_${itemOne.ticker}`)
-    const secondtickerincache = Cache.get(`stock_${itemTwo.ticker}`)
-    if (firsttickerincache) {
-      Cache.del(`stock_${itemOne.ticker}`)
-    }
-    if (secondtickerincache) {
-      Cache.del(`stock_${itemTwo.ticker}`)
-    }
-    Cache.put(
-      `stock_${itemOne.ticker}`,
-      {
-        cachestockTick: itemOne.ticker,
-        cachestockprice: itemOne.tickerprice,
-        cachedlikes: itemOne.likes
-      },
-      18000000
-    )
-    Cache.put(
-      `stock_${itemTwo.ticker}`,
-      {
-        cachestockTick: itemTwo.ticker,
-        cachestockprice: itemTwo.tickerprice,
-        cachedlikes: itemTwo.likes
-      },
-      18000000
-    )
-    return true
-  } catch (error) {
-    logger.info(`nasdaq error cacheMultipleItems: ${error}`)
-    throw new Error(`error cacheMultipleItems data\n:${error} `)
-  }
-}
-// #endregion
-
-// #region singledatacreator
-const singledatacreator = async value => {
-  try {
-    const result = await dataModel.create({
-      stockTick: value.ticker,
-      stockprice: value.price,
-      likes: value.likes
-    })
-    return result
-  } catch (error) {
-    logger.info(`nasdaq error singledatacreator: ${error}`)
-    throw new Error(`error singledatacreator data:${error} `)
-  }
-}
-// #endregion
-
-// #region multipledatacreator
-/**
- * async fat arrow function for creating multiple stocks and add them to the cache
- * @param {Object} value containing the data to be injected
- * @return {Promise} with the result of the operation
- * @throws {Error} containg information about type of error
- */
-
-const multipledatacreator = async value => {
-  try {
-    const {
-      firstticker,
-      firstprice,
-      secondticker,
-      secondprice,
-      tickerliked,
-      user
-    } = value
-
-    await dataModel.insertMany([
-      {
-        stockTick: firstticker,
-        stockprice: firstprice,
-        likes: tickerliked ? [{likedby: user}] : []
-      },
-      {
-        stockTick: secondticker,
-        stockprice: secondprice,
-        likes: tickerliked ? [{likedby: user}] : []
-      }
-    ])
-
-    return true
-  } catch (error) {
-    logger.error(`error multipledatacreator:${error}`)
-    throw new Error(`error multipledatacreator:${error} `)
-  }
-}
-// #endregion
-
-// #region multiple
+// #region multiple stock tickers
 MultiplePriceCheckerController.get('/', async (req, res) => {
   try {
     const originreq =
       req.headers['x-forwarded-for'] || req.connection.remoteAddress
-    logger.info(`origin: ${JSON.stringify(originreq, null, 2)}`)
     const firststock = req.query.stock[0]
     const secondstock = req.query.stock[1]
-    // const firstInCache = Cache.get(`stock_${firststock}`)
-    // const secondInCache = Cache.get(`stock_${secondstock}`)
 
-    const dataStored = await dataModel.find({
-      stockTick: {
-        $in: [firststock, secondstock]
-      }
-    })
-    const storedtickers = dataStored.length
+    const firstCached = Cache.get(`stock_${firststock}`)
+    const secondCached = Cache.get(`stock_${secondstock}`)
 
-    if (storedtickers === 2) {
-      const firstLikes = dataStored[0].likes
-      const secondLikes = dataStored[1].likes
-      const firstprice = dataStored[0].stockprice
-      const secondprice = dataStored[1].stockprice
-      if (!req.query.like) {
-        // call cache multiple
-        await cacheMultipleItems({
-          itemOne: {
-            ticker: firststock,
-            tickerprice: firstprice,
-            likes: firstLikes
-          },
-          itemTwo: {
-            ticker: secondstock,
-            tickerprice: secondprice,
-            likes: secondLikes
-          }
-        })
-        //
+    if (firstCached && secondCached) {
+      if (req.query.like) {
+        const ipPresentfirstStock = firstCached.cachedLikes.findIndex(
+          x => x.likedby === originreq
+        )
+        const ipPresentsecondStock = secondCached.cachedLikes.findIndex(
+          x => x.likedby === originreq
+        )
+        let numFirstLikes = firstCached.cachedLikes.length
+        let numSecondLikes = secondCached.cachedLikes.length
+
+        if (ipPresentfirstStock < 0) {
+          await dataModel.findOneAndUpdate(
+            {stockTick: firststock},
+            {
+              $push: {
+                likes: {
+                  likedby: originreq
+                }
+              }
+            }
+          )
+          numFirstLikes += 1
+        }
+        if (ipPresentsecondStock < 0) {
+          await dataModel.findOneAndUpdate(
+            {stockTick: secondstock},
+            {
+              $push: {
+                likes: {
+                  likedby: originreq
+                }
+              }
+            }
+          )
+          numSecondLikes += 1
+        }
         return res.status(200).json({
           stockData: [
             {
-              stock: dataStored[0].stockTick,
-              price: dataStored[0].stockprice,
-              rel_likes: firstLikes.length - secondLikes.length
+              stock: firststock,
+              price: firstCached.cachedPrice,
+              rel_likes: numFirstLikes - numSecondLikes
             },
             {
-              stock: dataStored[1].stockTick,
-              price: dataStored[1].stockprice,
-              rel_likes: secondLikes.length - firstLikes.length
+              stock: secondstock,
+              price: secondCached.cachedPrice,
+              rel_likes: numSecondLikes - numFirstLikes
             }
           ]
         })
       }
-      const injectmultipledata = await updateAndCacheMultiple()
-      return res.status(200).json('multiple db data')
-    }
-    if (storedtickers === 0) {
-      const dataFetch = await fetchMultiple(firststock, secondstock)
-      console.log('====================================')
-      console.log(`result fetch=>${JSON.stringify(dataFetch, null, 2)}`)
-      console.log('====================================')
-      await multipledatacreator({
-        firstticker: firststock,
-        firstprice: dataFetch.priceOne,
-        secondticker: secondstock,
-        secondprice: dataFetch.priceTwo,
-        tickerliked: req.query.like,
-        user: originreq
-      })
-      await cacheMultipleItems({
-        itemOne: {
-          ticker: firststock,
-          tickerprice: dataFetch.priceOne,
-          likes: req.query.like ? [{likedby: originreq}] : []
-        },
-        itemTwo: {
-          ticker: secondstock,
-          tickerprice: dataFetch.priceTwo,
-          likes: req.query.like ? [{likedby: originreq}] : []
-        }
-      })
       return res.status(200).json({
         stockData: [
           {
             stock: firststock,
-            price: dataFetch.priceOne,
-            rel_likes: 0
+            price: firstCached.cachedPrice,
+            rel_likes:
+              firstCached.cachedLikes.length - secondCached.cachedLikes.length
           },
           {
             stock: secondstock,
-            price: dataFetch.priceTwo,
-            rel_likes: 0
+            price: secondCached.cachedPrice,
+            rel_likes:
+              secondCached.cachedLikes.length - firstCached.cachedLikes.length
           }
         ]
       })
     }
-    if (storedtickers === 1) {
-      const savedData = dataStored[0]
-      const tickerPrice = await fetchSingle(
-        savedData.stockTick === firststock ? secondstock : firststock
-      )
+    // checks if first is present fetch info on second
 
-      const oneinjectresult = await singledatacreator({
-        ticker: savedData.stockTick === firststock ? secondstock : firststock,
-        price: tickerPrice,
+    if (firstCached) {
+      const {cachedLikes} = firstCached
+      const secondLike = req.query.like ? 1 : 0
+      let cachedTickerLikes = cachedLikes.length
+
+      const tickerPrice = await fetchSingle(secondstock)
+      await dataModel.create({
+        stockTick: secondstock,
+        stockPrice: tickerPrice,
         likes: req.query.like ? [{likedby: originreq}] : []
       })
-      if (!req.query.like) {
-        return res.status(200).json({
-          stockData: [
+
+      if (req.query.like) {
+        const existsIp = cachedLikes.findIndex(x => x.likedby === originreq)
+        if (existsIp < 0) {
+          await dataModel.findOneAndUpdate(
+            {stockTick: firststock},
             {
-              stock:
-                savedData.stockTick === firststock ? secondstock : firststock,
-              price: tickerPrice,
-              rel_likes: 0
-            },
-            {
-              stock:
-                savedData.stockTick === firststock ? secondstock : firststock,
-              price: tickerPrice,
-              rel_likes: 0
+              $push: {
+                likes: {
+                  likedby: originreq
+                }
+              }
             }
-          ]
-        })
+          )
+          cachedTickerLikes += 1
+        }
       }
+      return res.status(200).json({
+        stockData: [
+          {
+            stock: firststock,
+            price: firstCached.cachedPrice,
+            rel_likes: cachedTickerLikes - secondLike
+          },
+          {
+            stock: secondstock,
+            price: tickerPrice,
+            rel_likes: secondLike - cachedTickerLikes
+          }
+        ]
+      })
     }
-    return res
-      .status(500)
-      .json({message: 'something awfull happened to get to these here parts'})
+    //
+    // checks if second is present fetch info on first
+
+    if (secondCached) {
+      const firstLike = req.query.like ? 1 : 0
+      const {cachedLikes} = secondCached
+      let cachedTickerLikes = cachedLikes.length
+      const tickerPrice = await fetchSingle(firststock)
+      await dataModel.create({
+        stockTick: firststock,
+        stockPrice: tickerPrice,
+        likes: req.query.like ? [{likedby: originreq}] : []
+      })
+
+      if (req.query.like) {
+        const ipIsPresent = cachedLikes.findIndex(x => x.likedby === originreq)
+        if (ipIsPresent < 0) {
+          await dataModel.findOneAndUpdate(
+            {stockTick: secondstock},
+            {
+              $push: {
+                likes: {
+                  likedby: originreq
+                }
+              }
+            }
+          )
+          cachedTickerLikes += 1
+        }
+      }
+      return res.status(200).json({
+        stockData: [
+          {
+            stock: firststock,
+            price: tickerPrice,
+            rel_likes: firstLike - cachedTickerLikes
+          },
+          {
+            stock: secondstock,
+            price: secondCached.cachedPrice,
+            rel_likes: cachedTickerLikes - firstLike
+          }
+        ]
+      })
+    }
+
+    const multipleFetchResult = await fetchMultiple(firststock, secondstock)
+    const {firstTickerPrice, secondTickerPrice} = multipleFetchResult
+
+    await dataModel.create([
+      {
+        stockTick: firststock,
+        stockPrice: firstTickerPrice,
+        likes: req.query.like ? [{likedby: originreq}] : []
+      },
+      {
+        stockTick: secondstock,
+        stockPrice: secondTickerPrice,
+        likes: req.query.like ? [{likedby: originreq}] : []
+      }
+    ])
+    return res.status(200).json({
+      stockData: [
+        {stock: firststock, price: firstTickerPrice, rel_likes: 0},
+        {stock: secondstock, price: secondTickerPrice, rel_likes: 0}
+      ]
+    })
   } catch (error) {
     logger.info(`nasdaq error: ${error}`)
     return res.status(500).json({message: 'Something really bad happened'})

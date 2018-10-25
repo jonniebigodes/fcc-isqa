@@ -24,11 +24,14 @@ const endPoint = 'https://www.quandl.com/api/v3/datasets/WIKI/'
 
 // #region middleware
 SinglePriceCheckerController.use((req, res, next) => {
-  logger.info(
-    `nasdaq single date=>${new Date()}\n method=>${
-      req.method
-    }\n url=>${JSON.stringify(req.query)}\nsender:${req.ip}`
-  )
+  if (process.env.NODE_ENV !== 'test') {
+    logger.info(
+      `nasdaq single date=>${new Date()}\n method=>${
+        req.method
+      }\n url=>${JSON.stringify(req.query)}\nsender:${req.ip}`
+    )
+  }
+
   next() // make sure we go to the next routes and don't stop here
 })
 // #endregion
@@ -60,89 +63,6 @@ const fetchSingle = async value => {
 }
 // #endregion
 
-// #region db cache creator
-/**
- * fat arrow function to inject ticker data in the collection and cache
- * @param {string} ticker stock ticker to add
- * @param {Number} price price of the stock ticker
- * @param {boolean} like user likes this stock
- * @param {string} user ip of the person liking the ticker
- * @return {Promise}
- * @throws {Error}
- */
-const dataInjector = async (ticker, price, like, user) => {
-  try {
-    // const stockModel = mongoose.model('stock')
-    await dataModel.create({
-      stockTick: ticker,
-      stockprice: price,
-      likes: like ? [{likedby: user}] : []
-    })
-
-    Cache.put(
-      `stock_${ticker}`,
-      {
-        cachestockTick: ticker,
-        cachestockprice: price,
-        cachedlikes: like ? [{likedby: user}] : []
-      },
-      18000000
-    )
-    return true
-  } catch (error) {
-    logger.error(`error injector :${error}`)
-    throw new Error(`error dataUpdater\n:${error} `)
-  }
-}
-// #endregion
-
-// #region db cache updater
-/**
- * async fat arrow function to update the ticker information
- * @param {*} ticker the stock ticker to be updated
- * @param {*} user  the ip of the person liking the stock
- * @returns {Promise} with result of the operation
- * @throws {Error}
- */
-const dataUpdater = async (ticker, user) => {
-  try {
-    // const stockModel = mongoose.model('stock')
-    const updatedStock = await dataModel.findOneAndUpdate(
-      {stockTick: ticker},
-      {
-        $push: {
-          likes: {
-            likedby: user
-          }
-        }
-      },
-      {new: true}
-    )
-    const {likes, stockprice} = updatedStock
-    Cache.del(`stock_${ticker}`)
-    Cache.put(
-      `stock_${ticker}`,
-      {
-        cachestockTick: ticker,
-        cachestockprice: stockprice,
-        cachedlikes: likes
-      },
-      18000000
-    )
-    return {
-      stockData: {
-        stock: ticker,
-        price: stockprice,
-        likes: likes.length
-      }
-    }
-  } catch (error) {
-    logger.error(`error dataUpdater :${error}`)
-    throw new Error(`error dataUpdater\n:${error} `)
-  }
-}
-// #endregion
-
 // #region single
 /**
  * entry point for the controller
@@ -152,94 +72,60 @@ const dataUpdater = async (ticker, user) => {
  */
 SinglePriceCheckerController.get('/', async (req, res) => {
   try {
-    const ticker = req.query.stock
-    const itemCached = Cache.get(`stock_${ticker}`)
+    const stockTicker = req.query.stock
     const originreq =
       req.headers['x-forwarded-for'] || req.connection.remoteAddress
-
-    // const stockModel = mongoose.model('stock')
+    const itemCached = Cache.get(`stock_${stockTicker}`)
     if (itemCached) {
-      const {cachedlikes, cachestockprice, cachestockTick} = itemCached
+      const {cachedPrice, cachedLikes} = itemCached
       if (!req.query.like) {
         return res.status(200).json({
           stockData: {
-            stock: cachestockTick,
-            price: cachestockprice,
-            likes: cachedlikes.length
+            stock: stockTicker,
+            price: cachedPrice,
+            likes: cachedLikes.length
           }
         })
       }
-
-      const userLiked = cachedlikes.find(x => x.likedby === originreq)
-
-      if (userLiked) {
+      const ipPresent = cachedLikes.findIndex(x => x.likedby === originreq)
+      if (ipPresent >= 0) {
         return res.status(200).json({
           stockData: {
-            stock: cachestockTick,
-            price: cachestockprice,
-            likes: cachedlikes.length
+            stock: stockTicker,
+            price: cachedPrice,
+            likes: cachedLikes.length
           }
         })
       }
-      const updateDataResult = await dataUpdater(ticker, originreq)
-      if (updateDataResult) {
-        return res.status(200).json(updateDataResult)
-      }
+      await dataModel.findOneAndUpdate(
+        {stockTick: stockTicker},
+        {
+          $push: {
+            likes: {
+              likedby: originreq
+            }
+          }
+        }
+      )
+      return res.status(200).json({
+        stockData: {
+          stock: stockTicker,
+          price: cachedPrice,
+          likes: cachedLikes.length + 1
+        }
+      })
     }
 
-    const dbStock = await dataModel.findOne({stockTick: ticker})
-
-    if (dbStock) {
-      const {likes, stockprice} = dbStock
-      if (!req.query.like) {
-        Cache.put(
-          `stock_${ticker}`,
-          {
-            cachestockTick: ticker,
-            cachestockprice: stockprice,
-            cachedlikes: likes
-          },
-          18000000
-        )
-        return res.status(200).json({
-          stockData: {
-            stock: ticker,
-            price: stockprice,
-            likes: likes.length
-          }
-        })
-      }
-      const ipExists = likes.find(x => x.likedby === originreq)
-
-      if (ipExists) {
-        Cache.put(
-          `stock_${ticker}`,
-          {
-            cachestockTick: ticker,
-            cachestockprice: stockprice,
-            cachedlikes: likes
-          },
-          18000000
-        )
-        return res.status(200).json({
-          stockData: {
-            stock: ticker,
-            price: stockprice,
-            likes: likes ? likes.length : 0
-          }
-        })
-      }
-      const tickerupdateresult = await dataUpdater(ticker, originreq)
-      if (dataUpdater) {
-        return res.status(200).json(tickerupdateresult)
-      }
-    }
-    const getTickerPrice = await fetchSingle(req.query.stock)
-    await dataInjector(ticker, getTickerPrice, req.query.like, originreq)
+    const tickerPrice = await fetchSingle(stockTicker)
+    await dataModel.create({
+      stockTick: stockTicker,
+      stockPrice: tickerPrice,
+      likes: req.query.like ? [{likedby: originreq}] : []
+    })
     return res.status(200).json({
       stockData: {
-        stock: ticker,
-        price: getTickerPrice,
+        stock: stockTicker,
+        price: tickerPrice,
         likes: req.query.like ? 1 : 0
       }
     })

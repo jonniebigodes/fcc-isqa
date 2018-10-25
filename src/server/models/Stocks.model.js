@@ -9,7 +9,7 @@ const LikesSchema = mongoose.Schema(
 
 const StocksSchema = mongoose.Schema({
   stockTick: {type: String, required: true},
-  stockprice: {type: Number, required: true},
+  stockPrice: {type: Number, required: true},
   likes: [LikesSchema]
 })
 
