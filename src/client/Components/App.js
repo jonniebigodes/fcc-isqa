@@ -105,6 +105,6 @@ const App = () => {
   )
 }
 App.propTypes = {
-  classes: PropTypes.shape({})
+  classes: PropTypes.shape({}) // eslint-disable-line
 }
 export default App
