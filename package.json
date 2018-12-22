@@ -28,7 +28,7 @@
     "buildcontrollers": "npx babel ./src/server/controllers/ --out-dir ./lib --presets minify",
     "buildserverdeps":"concurrently \"npm:buildserver\" \"npm:buildlogger\" \"npm:buildmodels\" \"npm:buildcontrollers\"",
     "buildclient": "parcel build ./src/client/index.html --public-url ./",
-    "postinstall": "concurrently \"npm:buildserverdeps\" \"npm:buildclient\"",
+    "postinstall": "npm run buildserverdeps && npm run buildclient",
     "start": "node ./lib/server.bundle.js"
   },
   "repository": {

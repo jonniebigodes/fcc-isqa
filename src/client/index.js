@@ -18,7 +18,7 @@ const Metric = Loadable({
   delay: 1000,
   timeout: 20000
 })
-const MessageBoards = Loadable({
+/* const MessageBoards = Loadable({
   loader: () => import('./Components/MessageBoard/Boards/MessageBoardApp'),
   loading: Loader,
   delay: 1000,
@@ -29,7 +29,7 @@ const MessageBoardThreads = Loadable({
   loading: Loader,
   delay: 1000,
   timeout: 20000
-})
+}) */
 const IssueTrack = Loadable({
   loader: () => import('./Components/IssueTracker/Issues/IssueTracker'),
   loading: Loader,
@@ -64,7 +64,7 @@ render(
         <Route path="/books" exact component={Personal} />
         <Route path="/issuetracker" exact component={ProjectTrack} />
         <Route path="/issuetracker/:project" component={IssueTrack} />
-        <Route path="/messageboards" exact component={MessageBoards} />
+        {/* <Route path="/messageboards" exact component={MessageBoards} /> */}
         <Route path="/b/:board" exact component={MessageBoardThreads} />
         <Route path="/metrics" exact component={Metric} />
         <Route path="/stockdata" exact component={Stocks} />
