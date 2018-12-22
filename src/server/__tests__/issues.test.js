@@ -71,8 +71,8 @@ describe('Testing issues', () => {
           }
           res.should.have.status(200)
           res.should.have.status(200)
-          res.body.should.have.property('data').that.is.an('array')
-          res.body.should.have.property('data').to.be.lengthOf(0)
+          res.body.should.have.property('issuesData').that.is.an('array')
+          res.body.should.have.property('issuesData').to.be.lengthOf(0)
           done()
         })
     })
@@ -224,7 +224,7 @@ describe('Testing issues', () => {
         chai
           .request(server)
           .put(`/api/issues/5b86a61e5ecb141184849fb1?issue=${issueIdentifier}`)
-          .send({})
+          .send({open: false})
           .end((err, res) => {
             if (err) {
               done(err)

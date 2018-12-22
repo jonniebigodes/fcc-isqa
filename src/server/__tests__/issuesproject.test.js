@@ -48,7 +48,7 @@ describe('Testing project issues', () => {
     it('should return array of stored projects', done => {
       chai
         .request(server)
-        .get('/api/issues/projects')
+        .get('/api/projects')
         .end((err, res) => {
           if (err) {
             done(err)
@@ -65,7 +65,7 @@ describe('Testing project issues', () => {
     it('should allow creating a new project', done => {
       chai
         .request(server)
-        .post('/api/issues/projects')
+        .post('/api/projects')
         .send({title: 'testproject'})
         .end((err, res) => {
           if (err) {
@@ -89,7 +89,7 @@ describe('Testing project issues', () => {
     it('should return error not allowing to create a project without a title', done => {
       chai
         .request(server)
-        .post('/api/issues/projects')
+        .post('/api/projects')
         .send({})
         .end((err, res) => {
           if (err) {
@@ -113,7 +113,7 @@ describe('Testing project issues', () => {
     it('should not allow the creation of a project with the same title', done => {
       chai
         .request(server)
-        .post('/api/issues/projects')
+        .post('/api/projects')
         .send({title: 'testproject'})
         .end((err, res) => {
           if (err) {
@@ -129,7 +129,7 @@ describe('Testing project issues', () => {
     it('should allow creating a new project', done => {
       chai
         .request(server)
-        .post('/api/issues/projects')
+        .post('/api/projects')
         .send({title: 'testproject2'})
         .end((err, res) => {
           if (err) {
@@ -153,7 +153,7 @@ describe('Testing project issues', () => {
     it('should allow deletion of a new project', done => {
       chai
         .request(server)
-        .del(`/api/issues/projects/${projectidentifier}`)
+        .del(`/api/projects/${projectidentifier}`)
 
         .send()
         .end((err, res) => {

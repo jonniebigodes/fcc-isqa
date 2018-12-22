@@ -78,8 +78,20 @@ IssueTrackerController.use(async (req, res, next) => {
 // #endregion
 
 // #region cache items
-
-IssueTrackerController.get('/icache', async (req, res) => {
+IssueTrackerController.get('/icache/:idproject?', async (req, res) => {
+  if (req.params.idproject) {
+    const cachedItem = Cache.get(`issue_${req.params.idproject}`)
+    return res.status(cachedItem ? 200 : 422).json({
+      issuesData: cachedItem
+        ? {
+            id: req.params.idproject,
+            title: cachedItem.cachedtitle,
+            creationdate: cachedItem.cachedate,
+            issues: cachedItem.cachedissues
+          }
+        : {}
+    })
+  }
   const itemscache = Cache.keys().filter(item => item.startsWith('issue_'))
   const result = itemscache.map(item => {
     const data = Cache.get(item)
@@ -207,15 +219,15 @@ IssueTrackerController.route('/:project')
     ],
     async (req, res) => {
       try {
-        const projectInfo = await issueprojectmodel.findById(req.params.project)
-        if (!projectInfo) {
+        const cacheItem = Cache.get(`issue_${req.params.project}`)
+        if (!cacheItem) {
           return res
             .status(422)
             .json({message: 'provided project does not exist'})
         }
 
         const numKeys = Object.keys(req.query).length
-        const cacheItem = Cache.get(`issue_${req.params.project}`)
+
         if (cacheItem) {
           if (numKeys < 2) {
             return res
@@ -227,14 +239,9 @@ IssueTrackerController.route('/:project')
           const allissues = await issuedatamodel
             .find({project: req.params.project})
             .select('-__v')
-          if (allissues) {
-            Cache.put(`issue_${req.params.project}`, {
-              cachedtitle: projectInfo.title,
-              cachedate: new Date(),
-              cachedissues: JSON.parse(JSON.stringify(allissues))
-            })
-          }
-          return res.status(200).json({data: allissues.length ? allissues : []})
+          return res
+            .status(200)
+            .json({issuesData: allissues.length ? allissues : []})
         }
         let dbresult = []
         if (numKeys === 1) {
@@ -243,7 +250,7 @@ IssueTrackerController.route('/:project')
         if (numKeys >= 2) {
           dbresult = await searchMultipleDb(req.params.project, req.query)
         }
-        return res.status(200).json({data: dbresult})
+        return res.status(200).json({issuesData: dbresult})
       } catch (error) {
         logger.info(`IssueTracker issue get error: ${error}`)
         return res.status(500).json({message: 'Something really bad happened'})
@@ -282,23 +289,8 @@ IssueTrackerController.route('/:project')
           assigned: req.body.assigned ? req.body.assigned : '',
           status: req.body.status ? req.body.status : ''
         })
-
         if (storeddata) {
-          const itemCached = Cache.get(`issue_${req.params.project}`)
-          if (itemCached) {
-            Cache.del(`issue_${req.params.project}`)
-          }
           /*eslint-disable */
-          const newIssue = JSON.parse(JSON.stringify(storeddata))
-          delete newIssue.__v
-          Cache.put(`issue_${req.params.project}`, {
-            cachedtitle: projectinfo.title,
-            cachedate: new Date(),
-            cachedissues: itemCached
-              ? [...itemCached.cachedissues, newIssue]
-              : [newIssue]
-          })
-
           return res.status(201).json({
             newIssue: {
               _id: storeddata._id,
@@ -312,8 +304,9 @@ IssueTrackerController.route('/:project')
               status_text: req.body.status ? req.body.status : ''
             }
           })
+          /* eslint-enable */
         }
-        /* eslint-enable */
+
         return res.status(422).json({
           message: `the intended project ${req.params.project} does not exist`
         })
@@ -378,31 +371,6 @@ IssueTrackerController.route('/:project')
           {new: true}
         )
         if (updatestoredData) {
-          const issueCache = Cache.get(`issue_${req.params.project}`)
-          const updatedIssue = JSON.parse(JSON.stringify(updatestoredData))
-          /* eslint-disable */
-          delete updatedIssue.__v
-          if (issueCache) {
-            const itempos = issueCache.cachedissues.findIndex(
-              x => x._id === req.query.issue
-            )
-            /* eslint-enable */
-            if (itempos >= 0) {
-              Cache.del(`issue_${req.params.project}`)
-              issueCache.cachedissues[itempos] = updatedIssue
-              Cache.put(`issue_${req.params.project}`, {
-                cachedtitle: updatestoredData.title,
-                cachedate: new Date(),
-                cachedissues: issueCache.cachedissues
-              })
-            }
-          } else {
-            Cache.put(`issue_${req.params.project}`, {
-              cachedtitle: projectinfo.title,
-              cachedate: new Date(),
-              cachedissues: [updatedIssue]
-            })
-          }
           return res.status(200).json({message: `successfully updated`})
         }
 
@@ -434,20 +402,6 @@ IssueTrackerController.route('/:project')
           req.query.issue
         )
         if (storeddata) {
-          const itemCached = Cache.get(`issue_${req.params.project}`)
-          if (itemCached) {
-            Cache.del(`issue_${req.params.project}`)
-            const {cachedissues} = itemCached
-            /* eslint-disable */
-            const newissues = cachedissues.filter(
-              x => x._id !== req.query.issue
-            )
-            /* eslint-enable */
-            Cache.put(`issue_${req.params.project}`, {
-              cachedtitle: itemCached.cachedtitle,
-              cachedissues: newissues
-            })
-          }
           return res.status(200).json({message: `deleted ${req.query.issue}`})
         }
         return res

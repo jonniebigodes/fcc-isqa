@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {withStyles} from '@material-ui/core/styles'
-import CircularProgress from '@material-ui/core/CircularProgress'
+import LinearProgress from '@material-ui/core/LinearProgress'
 import Typography from '@material-ui/core/Typography'
 
 const styles = theme => ({
@@ -19,10 +19,11 @@ const Loader = props => {
         Loading.....
       </Typography>
       <div>
-        <CircularProgress
+        <LinearProgress
           className={classes.progress}
           size={100}
           thickness={5}
+          variant="query"
         />
       </div>
     </div>

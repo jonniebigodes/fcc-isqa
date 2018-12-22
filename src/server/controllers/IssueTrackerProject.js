@@ -81,6 +81,23 @@ ProjectIssueTrackerController.use(async (req, res, next) => {
 })
 // #endregion
 
+// #region cached_projects
+ProjectIssueTrackerController.get('/cprojects', async (req, res) => {
+  const itemscache = Cache.keys().filter(item => item.startsWith('issue_'))
+  const result = itemscache.map(item => {
+    const data = Cache.get(item)
+    const projectid = item.slice(item.indexOf('_') + 1)
+    return {
+      id: projectid,
+      title: data.cachedtitle,
+      creationdate: data.cachedate,
+      issues: data.cachedissues.length
+    }
+  })
+  return res.status(200).json({projects: result})
+})
+// #endregion
+
 // #region issueprojects
 ProjectIssueTrackerController.route('/')
   .get(async (req, res) => {
@@ -124,12 +141,6 @@ ProjectIssueTrackerController.route('/')
       })
 
       /* eslint-disable */
-      Cache.put(`issue_${newProject._id}`, {
-        cachedid: newProject._id,
-        cachedtitle: req.body.title,
-        cachedate: new Date(),
-        cachedissues: []
-      })
 
       return res.status(201).json({
         idproject: newProject._id,
@@ -161,7 +172,6 @@ ProjectIssueTrackerController.delete(
         issuedatamodel.deleteMany({project: req.params.project})
       ])
       if (resultdelete.length) {
-        Cache.del(`issue_${req.params.project}`)
         return res
           .status(200)
           .json({message: `project ${req.params.project} deleted`})
@@ -176,5 +186,6 @@ ProjectIssueTrackerController.delete(
   }
 )
 // #endregion
+
 /** Issue tracker module  */
 export default ProjectIssueTrackerController

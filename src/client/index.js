@@ -9,38 +9,50 @@ import Template from './Template/index'
 const Personal = Loadable({
   loader: () => import('./Components/PersonalLibrary/BookApp'),
   loading: Loader,
-  delay: 300,
+  delay: 1000,
   timeout: 20000
 })
 const Metric = Loadable({
   loader: () => import('./Components/MetricConverter/ConverterApp'),
   loading: Loader,
-  delay: 300,
+  delay: 1000,
   timeout: 20000
 })
-const Messages = Loadable({
-  loader: () => import('./Components/MessageBoard/MessageBoardApp'),
+const MessageBoards = Loadable({
+  loader: () => import('./Components/MessageBoard/Boards/MessageBoardApp'),
   loading: Loader,
-  delay: 300,
+  delay: 1000,
+  timeout: 20000
+})
+const MessageBoardThreads = Loadable({
+  loader: () => import('./Components/MessageBoard/Threads/Threads'),
+  loading: Loader,
+  delay: 1000,
   timeout: 20000
 })
 const IssueTrack = Loadable({
-  loader: () => import('./Components/IssueTracker/IssueTrackerApp'),
+  loader: () => import('./Components/IssueTracker/Issues/IssueTracker'),
   loading: Loader,
-  delay: 300,
+  delay: 1000,
+  timeout: 20000
+})
+const ProjectTrack = Loadable({
+  loader: () => import('./Components/IssueTracker/Projects/ProjectTracker'),
+  loading: Loader,
+  delay: 2000,
   timeout: 20000
 })
 
 const Stocks = Loadable({
   loader: () => import('./Components/StockSearcher/StockApp'),
   loading: Loader,
-  delay: 300,
+  delay: 1000,
   timeout: 20000
 })
 const Home = Loadable({
   loader: () => import('./Components/App'),
   loading: Loader,
-  delay: 300,
+  delay: 2000,
   timeout: 20000
 })
 
@@ -50,8 +62,10 @@ render(
       <Switch>
         <Route path="/" exact component={Home} />
         <Route path="/books" exact component={Personal} />
-        <Route path="/issuetracker" exact component={IssueTrack} />
-        <Route path="/messageboards" exact component={Messages} />
+        <Route path="/issuetracker" exact component={ProjectTrack} />
+        <Route path="/issuetracker/:project" component={IssueTrack} />
+        <Route path="/messageboards" exact component={MessageBoards} />
+        <Route path="/b/:board" exact component={MessageBoardThreads} />
         <Route path="/metrics" exact component={Metric} />
         <Route path="/stockdata" exact component={Stocks} />
         <Route component={UrlNotFound} />
