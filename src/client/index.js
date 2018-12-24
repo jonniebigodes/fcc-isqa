@@ -64,8 +64,8 @@ render(
         <Route path="/books" exact component={Personal} />
         <Route path="/issuetracker" exact component={ProjectTrack} />
         <Route path="/issuetracker/:project" component={IssueTrack} />
-        {/* <Route path="/messageboards" exact component={MessageBoards} /> */}
-        <Route path="/b/:board" exact component={MessageBoardThreads} />
+        {/* <Route path="/messageboards" exact component={MessageBoards} />
+        <Route path="/b/:board" exact component={MessageBoardThreads} /> */}
         <Route path="/metrics" exact component={Metric} />
         <Route path="/stockdata" exact component={Stocks} />
         <Route component={UrlNotFound} />
