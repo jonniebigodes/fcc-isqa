@@ -1,4 +1,4 @@
-import 'babel-polyfill'
+import '@babel/polyfill'
 import express from 'express'
 import axios from 'axios'
 import Cache from 'memory-cache'
@@ -57,7 +57,10 @@ const fetchSingle = async value => {
     const quandldata = response.data.dataset.data[0]
     return quandldata[4]
   } catch (error) {
-    logger.error(`error fetching single data :${error}`)
+    if (process.env.NODE_ENV !== 'test') {
+      logger.error(`error fetching single data :${error}`)
+    }
+
     throw new Error(`error ticker data\n:${error} `)
   }
 }
@@ -130,7 +133,10 @@ SinglePriceCheckerController.get('/', async (req, res) => {
       }
     })
   } catch (error) {
-    logger.info(`nasdaq error: ${error}`)
+    if (process.env.NODE_ENV !== 'test') {
+      logger.info(`nasdaq error: ${error}`)
+    }
+
     return res.status(500).json({message: 'Something really bad happened'})
   }
 })
