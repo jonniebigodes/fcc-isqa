@@ -1,3 +1,4 @@
+import '@babel/polyfill'
 import {createLogger, transports} from 'winston'
 
 const tsFormat = () => new Date().toLocaleTimeString()

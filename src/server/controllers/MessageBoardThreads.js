@@ -1,4 +1,4 @@
-import 'babel-polyfill'
+import '@babel/polyfill'
 import express from 'express'
 import Cache from 'memory-cache'
 import mongoose from 'mongoose'
@@ -56,7 +56,10 @@ BoardThreadsController.use(async (req, res, next) => {
         item.startsWith('messageboards_')
       )
       itemscache.map(item => Cache.del(item))
-      const alldata = await Promise.all([bModel.find({}), tModel.find({})])
+      const alldata = await Promise.all([
+        bModel.find({}).select('-__v'),
+        tModel.find({}).select('-__v')
+      ])
       if (alldata.length) {
         const messageboards = JSON.parse(JSON.stringify(alldata[0]))
         const threadsreplies = JSON.parse(JSON.stringify(alldata[1]))
@@ -78,8 +81,57 @@ BoardThreadsController.use(async (req, res, next) => {
     return res.status(500).json({message: 'Something really bad happened'})
   }
 })
+
 // #endregion
 
+// #region single board data from cache
+BoardThreadsController.get('/getallcache', async (req, res) => {
+  const itemscache = Cache.keys().filter(item =>
+    item.startsWith('messageboards_')
+  )
+
+  if (itemscache) {
+    return res.status(200).json({
+      result: itemscache.map(item => {
+        const data = Cache.get(item)
+        return {
+          title: data.cachedtitle,
+          creationdate: data.cacheddate,
+          threads: data.cachedthreads
+        }
+      })
+    })
+  }
+  return res.status(204).json({result: 'NO DATA'})
+})
+BoardThreadsController.route('/cachedthread/:boardid').get(
+  [
+    param('boardid')
+      .exists()
+      .isMongoId()
+  ],
+  (req, res) => {
+    try {
+      const errors = validationResult(req)
+      if (!errors.isEmpty()) {
+        return res.status(422).json({errors: errors.array()})
+      }
+      const itemInCache = Cache.get(`messageboards_${req.params.boardid}`)
+      if (itemInCache) {
+        return res.status(200).json({
+          title: itemInCache.cachedtitle,
+          creationdate: itemInCache.cacheddate,
+          threads: itemInCache.cachedthreads
+        })
+      }
+      return res.status(204).json({title: '', creationdate: '', threads: []})
+    } catch (error) {
+      logger.info(`MessageBoardThreads cached item error: ${error}`)
+      return res.status(500).json({message: 'Something really bad happened'})
+    }
+  }
+)
+// #endregion
 BoardThreadsController.route('/:board')
   .get(
     [
@@ -123,35 +175,6 @@ BoardThreadsController.route('/:board')
           return res.status(200).json({threads: result})
         }
         return res.status(204).json({message: 'no thread found'})
-        /*  const boardExists = await bModel.findById(req.params.board)
-        if (!boardExists) {
-          return res
-            .status(422)
-            .json({message: 'the specified messageboard does not exist'})
-        } 
-        const findresult = await tModel
-          .find({board_id: req.params.board})
-          .sort({bumped_on: -1})
-          .limit(10)
-        if (findresult.length) {
-          
-          const datasend = findresult.map(item => {
-            const {replies, thread_text, created_on, bumped_on} = item
-            return {
-              text: thread_text,
-              created: created_on,
-              bumped: bumped_on,
-              thread_replies: replies
-                .sort((a, b) => {
-                  return new Date(b.dateadded) - new Date(a.dateadded)
-                })
-                .slice(0, 3)
-            }
-          })
-          
-          return res.status(200).json(datasend)
-        }
-        return res.status(200).json({message: 'nothing added yet'}) */
       } catch (error) {
         logger.info(`MessageBoardThreads error: ${error}`)
         return res.status(500).json({message: 'Something really bad happened'})
@@ -186,40 +209,6 @@ BoardThreadsController.route('/:board')
           thread_replies: []
         })
         /* eslint-disable */
-        /* const cacheditem = Cache.get(`messageboards_${req.params.board}`)
-        if (cacheditem) {
-          Cache.del(`messageboards_${req.params.board}`)
-        }
-        /* Cache.put(`messageboards_${req.params.board}`, {
-          title: boardExists.title,
-          created: boardExists.created,
-          cachedthreads: cacheditem.cachedthreads.length
-            ? [
-                ...cacheditem.cachedthreads,
-                {
-                  id: newThread._id,
-                  text: req.body.text,
-                  board: req.params.board,
-                  deletepassword: req.body.delete_password,
-                  created: newThread.created_on,
-                  bumped: newThread.bumped_on,
-                  reported: false,
-                  cachedreplies: []
-                }
-              ]
-            : [
-                {
-                  id: newThread._id,
-                  text: req.body.text,
-                  board: req.params.board,
-                  deletepassword: req.body.delete_password,
-                  created: newThread.created_on,
-                  bumped: newThread.bumped_on,
-                  reported: false,
-                  cachedreplies: []
-                }
-              ]
-        })*/
 
         return res.status(201).json({
           id: newThread._id,
@@ -272,23 +261,6 @@ BoardThreadsController.route('/:board')
         return res
           .status(reportedresult ? 200 : 500)
           .json({message: reportedresult ? 'success' : 'error reporting'})
-        /* const iteminCache = Cache.get(`messageboards_${req.params.board}`)
-        if (iteminCache) {
-          const {cachedthreads} = iteminCache
-          const posthread = cachedthreads.findIndex(
-            x => x.id === req.query.thread_id
-          )
-          if (posthread) {
-            cachedthreads[posthread].reported = true
-          }
-
-          Cache.del(`messageboards_${req.params.board}`)
-          Cache.put(`messageboards_${req.params.board}`, {
-            cachedtitle: iteminCache.cachedtitle,
-            cachedcreated: iteminCache.cachedcreated,
-            cachedthreads: iteminCache.cachedthreads
-          })
-        } */
       } catch (error) {
         logger.info(`MessageBoardThreads error: ${error}`)
         return res.status(500).json({message: 'Something really bad happened'})
@@ -327,19 +299,6 @@ BoardThreadsController.route('/:board')
           return res.status(500).json({message: 'incorrect password'})
         }
         const delresult = await tModel.findByIdAndRemove(req.query.thread_id)
-        /* const iteminCache = Cache.get(`messageboards_${req.params.board}`)
-        if (iteminCache) {
-          const {cachedthreads} = iteminCache
-          const newThreads = cachedthreads.filter(
-            item => item.id !== req.query.thread_id
-          )
-          Cache.del(`messageboards_${req.params.board}`)
-          Cache.put(`messageboards_${req.params.board}`, {
-            cachedtitle: iteminCache.cachedtitle,
-            cachedcreated: iteminCache.cachedcreated,
-            cachedthreads: newThreads
-          })
-        } */
         return res.status(delresult ? 200 : 500).json({
           message: delresult
             ? 'success'

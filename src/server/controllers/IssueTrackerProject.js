@@ -3,7 +3,7 @@
  * @module ProjectIssueTrackerController
  *
  */
-import 'babel-polyfill'
+import '@babel/polyfill'
 import express from 'express'
 import Cache from 'memory-cache'
 import mongoose from 'mongoose'

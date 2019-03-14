@@ -120,7 +120,9 @@ mongoose
     }
   )
   .then(() => {
-    logger.info(`connection established`)
+    if (process.env.NODE_ENV !== 'test') {
+      logger.info(`connection established`)
+    }
   })
   .catch(err => {
     logger.error(`error fcc-isqa:${err}`)
@@ -136,7 +138,7 @@ app.get('*', (req, res) => {
 app.listen(app.get('port'), error => {
   if (error) {
     logger.error(`error fcc-isqa:${error}`)
-  } else {
+  } else if (process.env.NODE_ENV !== 'test') {
     logger.info(`fcc-isqa is running on port ${app.get('port')}`)
   }
 })

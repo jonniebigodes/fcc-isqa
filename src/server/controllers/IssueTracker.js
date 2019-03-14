@@ -1,4 +1,4 @@
-import 'babel-polyfill'
+import '@babel/polyfill'
 import express from 'express'
 import Cache from 'memory-cache'
 import mongoose from 'mongoose'
@@ -103,7 +103,7 @@ IssueTrackerController.get('/icache/:idproject?', async (req, res) => {
       issues: data.cachedissues
     }
   })
-  return res.status(200).json({issuesdata: result})
+  return res.status(200).json({issuesData: result})
 })
 // #endregion
 
@@ -232,7 +232,7 @@ IssueTrackerController.route('/:project')
           if (numKeys < 2) {
             return res
               .status(200)
-              .json({data: searchCache(numKeys, cacheItem, req.query)})
+              .json({issuesData: searchCache(numKeys, cacheItem, req.query)})
           }
         }
         if (numKeys === 0) {

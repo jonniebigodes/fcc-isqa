@@ -1,7 +1,7 @@
 /**
  * @module messageboardcontroller
  */
-import 'babel-polyfill'
+import '@babel/polyfill'
 import express from 'express'
 import Cache from 'memory-cache'
 import mongoose from 'mongoose'
@@ -44,6 +44,7 @@ AnonBardsController.use((req, res, next) => {
   }
   next() // make sure we go to the next routes and don't stop here
 })
+
 AnonBardsController.use(async (req, res, next) => {
   try {
     if (req.method === 'GET') {
@@ -89,7 +90,15 @@ AnonBardsController.route('/bcache').get(async (req, res) => {
   const itemscache = Cache.keys().filter(item =>
     item.startsWith('messageboards_')
   )
-  return res.status(200).json({data: itemscache.map(item => Cache.get(item))})
+  const result = itemscache.map(item => {
+    const messageboard = Cache.get(item)
+    const {cachedid, cachedtitle} = messageboard
+    return {
+      id: cachedid,
+      title: cachedtitle
+    }
+  })
+  return res.status(200).json({messageboards: result})
 })
 // #endregion
 
@@ -101,47 +110,19 @@ AnonBardsController.route('/')
         item.startsWith('messageboards_')
       )
       if (itemscache.length) {
-        return res.status(200).json({
-          boards: itemscache.map(item => {
-            return {
-              id: item.cachedid,
-              title: item.cachedtitle,
-              created: item.cacheddate,
-              threads: []
-            }
-          })
-        })
-      }
-      return res.status(200).json({boards: []})
-
-      /* eslint-disable */
-      /* const datacontent = await Promise.all([
-        bModel.find({}).select(),
-        tModel.find({}).select('-__v')
-      ])
-      const storedboards = datacontent[0]
-      const threadsstored = JSON.parse(JSON.stringify(datacontent[1]))
-     
-      storedboards.map(item =>
-        Cache.put(`messageboards_${item._id}`, {
-          cachedid: item._id,
-          cachedtitle: item.title,
-          cacheddate: item.created,
-          cachedthreads: threadsstored.filter(x => x.board_id === item._id)
-        })
-      )
-
-      return res.status(200).json({
-        boards: storedboards.map(item => {
+        const result = itemscache.map(item => {
+          const boardInfo = Cache.get(item)
           return {
-            id: item._id,
-            title: item.cachedtitle,
-            created: item.title,
+            id: boardInfo.cachedid,
+            title: boardInfo.cachedtitle,
             threads: []
           }
         })
-      }) */
-      /* eslint-enable */
+        return res.status(200).json({
+          boards: result
+        })
+      }
+      return res.status(200).json({boards: []})
     } catch (error) {
       logger.info(`AnonBardsController error: ${error}`)
       return res.status(500).json({message: 'Something really bad happened'})

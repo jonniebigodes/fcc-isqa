@@ -1,4 +1,4 @@
-import 'babel-polyfill'
+import '@babel/polyfill'
 import express from 'express'
 import Cache from 'memory-cache'
 import mongoose from 'mongoose'
@@ -53,7 +53,10 @@ BoardRepliesController.use(async (req, res, next) => {
         item.startsWith('messageboards_')
       )
       itemscache.map(item => Cache.del(item))
-      const alldata = await Promise.all([bModel.find({}), tModel.find({})])
+      const alldata = await Promise.all([
+        bModel.find({}).select('-__v'),
+        tModel.find({}).select('-__v')
+      ])
       if (alldata.length) {
         const messageboards = JSON.parse(JSON.stringify(alldata[0]))
         const threadsreplies = JSON.parse(JSON.stringify(alldata[1]))
@@ -75,6 +78,44 @@ BoardRepliesController.use(async (req, res, next) => {
     return res.status(500).json({message: 'Something really bad happened'})
   }
 })
+// #endregion
+
+// #region cachedreplies
+BoardRepliesController.route('/cachedreplies/:board').get(
+  [
+    param('board')
+      .exists()
+      .isMongoId(),
+    query('thread')
+      .exists()
+      .isMongoId()
+  ],
+  async (req, res) => {
+    try {
+      const errors = validationResult(req)
+      if (!errors.isEmpty()) {
+        return res.status(422).json({errors: errors.array()})
+      }
+      const dataCached = Cache.get(`messageboards_${req.params.board}`)
+      if (dataCached) {
+        const {cachedthreads} = dataCached
+        const threadData = cachedthreads.findIndex(
+          // eslint-disable-next-line no-underscore-dangle
+          x => x._id === req.query.thread
+        )
+        return res.status(200).json({
+          title: dataCached.cachedtitle,
+          creationdate: dataCached.cacheddate,
+          thread: cachedthreads[threadData]
+        })
+      }
+      return res.status(204)
+    } catch (error) {
+      logger.info(`MessageBoardReplies cached error: ${error}`)
+      return res.status(500).json({message: 'Something really bad happened'})
+    }
+  }
+)
 // #endregion
 
 BoardRepliesController.route('/:boardid')
@@ -119,20 +160,6 @@ BoardRepliesController.route('/:boardid')
           }
         }
 
-        /* const datastored = await tModel.findById(req.query.thread_id)
-        if (datastored) {
-          return res.status(200).json({
-            threadtext: datastored.thread_text,
-            createdOn: datastored.created_on,
-            bumpedOn: datastored.bumped_on,
-            replies: datastored.replies.map(x => {
-              return {
-                reply: x.reply_text,
-                replyOn: x.dateadded
-              }
-            })
-          })
-        } */
         return res
           .status(204)
           .json({message: 'Specified thread does not exist'})
@@ -186,8 +213,14 @@ BoardRepliesController.route('/:boardid')
             {new: true}
           )
           if (createReply) {
+            const {replies} = createReply
+
             // const itemcached= Cache.get(`messageboards_${req.params.board}`)
-            return res.status(201).json({message: 'your reply was added'})
+            return res.status(201).json({
+              // eslint-disable-next-line no-underscore-dangle
+              result: replies[replies.length - 1]._id,
+              message: 'your reply was added'
+            })
           }
         }
 
