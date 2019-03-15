@@ -1,25 +1,15 @@
 import React from 'react'
 import Helmet from 'react-helmet'
 
-import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles'
+import {MuiThemeProvider} from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
-import green from '@material-ui/core/colors/green'
-import lime from '@material-ui/core/colors/lime'
+import {theme} from '../../theme/MuiTheme'
 
 import {
   MetricConvertProvider,
   MetricConverterContext
 } from '../../contexts/MetricConverterContext'
 import ConverterContainer from './ConverterContainer'
-
-const theme = createMuiTheme({
-  palette: {
-    primary: green,
-    secondary: lime,
-    contrastThreshold: 3,
-    tonalOffset: 0.2
-  }
-})
 
 const MetricConverterApp = () => {
   return (

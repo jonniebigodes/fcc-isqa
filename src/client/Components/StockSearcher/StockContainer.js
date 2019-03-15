@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import {withStyles} from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
-import Tooltip from '@material-ui/core/Tooltip';
+import Tooltip from '@material-ui/core/Tooltip'
 import Grid from '@material-ui/core/Grid'
 import StockSearch from './StockSearch'
 import TickerInfo from './TickerInfo'
@@ -11,23 +11,22 @@ const styles = theme => ({
   layout: {
     width: 'auto',
     display: 'block'
-
   },
-  
+
   errorMessage: {
     ...theme.typography.button,
     paddingTop: theme.spacing.unit * 3
   },
-  itemsGrid:{
-    marginTop:theme.spacing.unit*2,
-    marginLeft:theme.spacing.unit*3,
-    marginRight:theme.spacing.unit*3,
-    width:'auto'
+  itemsGrid: {
+    marginTop: theme.spacing.unit * 2,
+    marginLeft: theme.spacing.unit * 3,
+    marginRight: theme.spacing.unit * 3,
+    width: 'auto'
   }
 })
 
 const StockContainer = props => {
-  const {classes, isError, errormessage, stockData,resetError} = props
+  const {classes, isError, errormessage, stockData, resetError} = props
   return (
     <div className={classes.layout}>
       <Typography gutterBottom variant="headline" align="center">
@@ -39,16 +38,15 @@ const StockContainer = props => {
           <Tooltip title="Click me to dismiss">
             {/* eslint-disable */}
             <div className={classes.errorMessage} onClick={resetError}>
-            <Typography align="center" gutterBottom variant="display1">
-              That went south real fast
-            </Typography>
-            <Typography align="center" gutterBottom variant="body2">
-              {errormessage}
-            </Typography>
-          </div>
-           { /* eslint-enable */ }
+              <Typography align="center" gutterBottom variant="display1">
+                That went south real fast
+              </Typography>
+              <Typography align="center" gutterBottom variant="body2">
+                {errormessage}
+              </Typography>
+            </div>
+            {/* eslint-enable */}
           </Tooltip>
-          
         )}
       </div>
       <div className={classes.itemsGrid}>
@@ -89,7 +87,7 @@ StockContainer.propTypes = {
       tickerLikes: PropTypes.number
     })
   ),
-  resetError:PropTypes.func
+  resetError: PropTypes.func
 }
 StockContainer.defaultProps = {
   isError: false,

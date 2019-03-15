@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import {withStyles} from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
-import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Checkbox from '@material-ui/core/Checkbox'
 import Typography from '@material-ui/core/Typography'
 import Favorite from '@material-ui/icons/Favorite'
@@ -14,23 +14,22 @@ const styles = theme => ({
     height: 150,
     display: 'block'
   },
-  tickerHeader:{
-    paddingTop:theme.spacing.unit,
-    backgroundColor:theme.palette.primary.main,
-    height:45
+  tickerHeader: {
+    paddingTop: theme.spacing.unit,
+    backgroundColor: theme.palette.primary.main,
+    height: 45
   },
-  tickerHeaderText:{
-    color:theme.palette.common.white,
-    textAlign:'center',
-    fontSize:18
+  tickerHeaderText: {
+    color: theme.palette.common.white,
+    textAlign: 'center',
+    fontSize: 18
   },
   information: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     marginLeft: theme.spacing.unit * 4,
-    marginRight: theme.spacing.unit * 4,
-    
+    marginRight: theme.spacing.unit * 4
   }
 })
 
@@ -39,22 +38,27 @@ const TickerInfo = props => {
   return (
     <Paper className={classes.root}>
       <div className={classes.tickerHeader}>
-        <Typography className={classes.tickerHeaderText}>{tickerData.nameOfTicker}</Typography>
+        <Typography className={classes.tickerHeaderText}>
+          {tickerData.nameOfTicker}
+        </Typography>
       </div>
       <div className={classes.information}>
-        <Typography variant='body2' align='center'>{tickerData.price}</Typography>
+        <Typography variant="body2" align="center">
+          {tickerData.price}
+        </Typography>
         <FormControlLabel
-        control={
-          <Checkbox
-          icon={<FavoriteBorder />}
-          checkedIcon={<Favorite />}
-          checked={tickerData.tickerLikes > 0}
+          control={
+            <Checkbox
+              icon={<FavoriteBorder />}
+              checkedIcon={<Favorite />}
+              checked={tickerData.tickerLikes > 0}
+            />
+          }
+          label={tickerData.tickerLikes}
         />
-        }
-        label={tickerData.tickerLikes}/>
       </div>
       <div>
-        <Typography variant="caption" align='center'>
+        <Typography variant="caption" align="center">
           Updated at {new Date().toISOString()}
         </Typography>
       </div>

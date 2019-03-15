@@ -55,6 +55,8 @@ const styles = theme => ({
   }
 })
 class IssueEditor extends Component {
+  // implement getderivedstate from props
+
   state = {
     /* eslint-disable */
     issueTitle: this.props.issue.issuetitle,

@@ -41,6 +41,7 @@ const ConverterContainer = props => {
           </Typography>
           <Converter />
           <div className={classes.inputMessage}>
+            {/* eslint-disable */}
             <Typography
               gutterBottom
               align="center"
@@ -48,9 +49,9 @@ const ConverterContainer = props => {
               {metricError
                 ? metricErrorMessage
                 : metricresult.initUnit
-                  ? JSON.stringify(metricresult)
-                  : ''}{' '}
-              {/*eslint-disable-line*/}
+                ? JSON.stringify(metricresult)
+                : ''}{' '}
+              {/* eslint-enable */}
             </Typography>
           </div>
         </Paper>

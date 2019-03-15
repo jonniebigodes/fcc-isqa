@@ -1,23 +1,15 @@
 import React from 'react'
 import Helmet from 'react-helmet'
-import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles'
+import {MuiThemeProvider} from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
-import green from '@material-ui/core/colors/green'
-import lime from '@material-ui/core/colors/lime'
+
 import {
   StockPriceProvider,
   StockPriceContext
 } from '../../contexts/StockPriceContext'
+import {theme} from '../../theme/MuiTheme'
 import StockContainer from './StockContainer'
 
-const theme = createMuiTheme({
-  palette: {
-    primary: green,
-    secondary: lime,
-    contrastThreshold: 3,
-    tonalOffset: 0.2
-  }
-})
 const StockApp = () => (
   <div style={{minHeight: '500px', marginLeft: 'auto', marginRight: 'auto'}}>
     <Helmet
@@ -37,7 +29,7 @@ const StockApp = () => (
       <CssBaseline />
       <StockPriceProvider>
         <StockPriceContext.Consumer>
-          {({results, stockError, stockErrorMessage,ErrorReset}) => (
+          {({results, stockError, stockErrorMessage, ErrorReset}) => (
             <StockContainer
               stockData={results}
               isError={stockError}

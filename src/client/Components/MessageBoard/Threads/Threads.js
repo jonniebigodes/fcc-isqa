@@ -4,45 +4,44 @@ import Helmet from 'react-helmet'
 import {MuiThemeProvider} from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import {theme} from '../../../theme/MuiTheme'
-import IssueTrackerContainer from './IssueTrackerContainer'
-import {IssuesProvider} from '../../../contexts/IssuesContext'
+import {ThreadsProvider} from '../../../contexts/ThreadsContext'
+import ThreadsContainer from './ThreadsContainer'
 
-const IssueTrackerApp = props => {
+const Threads = props => {
   const {match} = props
   const {params} = match
-
   return (
     <div>
       <Helmet
-        title="Super Duper Issue Tracker"
+        title="Super Duper Anon Message Board"
         meta={[
           {
             name: 'description',
-            content: 'freeCodeCamp ISQA challenges Issue Tracker'
+            content: 'freeCodeCamp ISQA challenges anonymous Messageboard'
           },
           {
             name: 'keywords',
-            content: 'react, fcc, challenges,isqa,issue tracker'
+            content: 'react, fcc, challenges,isqa,threads,message board'
           }
         ]}
       />
       <MuiThemeProvider theme={theme}>
         <CssBaseline />
-        <IssuesProvider>
-          <IssueTrackerContainer projectID={params.project} />
-        </IssuesProvider>
+        <ThreadsProvider>
+          <ThreadsContainer boardData={params.board} />
+        </ThreadsProvider>
       </MuiThemeProvider>
     </div>
   )
 }
-IssueTrackerApp.propTypes = {
+Threads.propTypes = {
   match: PropTypes.shape({
     isExact: PropTypes.bool,
     params: PropTypes.shape({
-      project: PropTypes.string
+      board: PropTypes.string
     }),
     path: PropTypes.string,
     url: PropTypes.string
   })
 }
-export default IssueTrackerApp
+export default Threads

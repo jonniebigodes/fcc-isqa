@@ -2,14 +2,9 @@ import React from 'react'
 import {Link} from 'react-router-dom'
 import PropTypes from 'prop-types'
 import uuid from 'uuid'
-import {
-  MuiThemeProvider,
-  createMuiTheme,
-  withStyles
-} from '@material-ui/core/styles'
+import {MuiThemeProvider, withStyles} from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
-import green from '@material-ui/core/colors/green'
-import lime from '@material-ui/core/colors/lime'
+
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
@@ -17,14 +12,7 @@ import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Paper from '@material-ui/core/Paper'
 
-const theme = createMuiTheme({
-  palette: {
-    primary: green,
-    secondary: lime,
-    contrastThreshold: 3,
-    tonalOffset: 0.2
-  }
-})
+import {theme} from '../theme/MuiTheme'
 
 const AppTableCell = withStyles(theme => ({
   head: {

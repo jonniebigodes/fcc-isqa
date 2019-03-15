@@ -123,31 +123,33 @@ class StockSearch extends Component {
                     label="Like"
                   />
                 </FormControl>
-                {hasBoth&&(
+                {hasBoth && (
                   <FormControl margin="normal" required fullWidth>
-                  <InputLabel htmlFor="secondTicker">Second Ticker</InputLabel>
-                  <Input
-                    name="secondTicker"
-                    id="SecondTicker"
-                    autoComplete="none"
-                    value={secondStockTicker}
-                    disabled={!hasBoth}
-                    onChange={this.onChangeSecondTicker}
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        icon={<FavoriteBorder />}
-                        checkedIcon={<Favorite />}
-                        disabled={!hasBoth}
-                        checked={hasBoth ? likes : false}
-                      />
-                    }
-                    label="Like"
-                  />
-                </FormControl>
+                    <InputLabel htmlFor="secondTicker">
+                      Second Ticker
+                    </InputLabel>
+                    <Input
+                      name="secondTicker"
+                      id="SecondTicker"
+                      autoComplete="none"
+                      value={secondStockTicker}
+                      disabled={!hasBoth}
+                      onChange={this.onChangeSecondTicker}
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          icon={<FavoriteBorder />}
+                          checkedIcon={<Favorite />}
+                          disabled={!hasBoth}
+                          checked={hasBoth ? likes : false}
+                        />
+                      }
+                      label="Like"
+                    />
+                  </FormControl>
                 )}
-                
+
                 <FormControl margin="normal" required fullWidth>
                   <FormControlLabel
                     control={

@@ -2,13 +2,12 @@ import React from 'react'
 import Helmet from 'react-helmet'
 import Grid from '@material-ui/core/Grid'
 import Tooltip from '@material-ui/core/Tooltip'
-import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles'
+import {MuiThemeProvider} from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
-import green from '@material-ui/core/colors/green'
-import lime from '@material-ui/core/colors/lime'
 import ContactSupport from '@material-ui/icons/ContactSupport'
 import NoteAdd from '@material-ui/icons/NoteAdd'
 import BookContainer from './BookContainer'
+import {theme} from '../../theme/MuiTheme'
 import {
   PersonalLibraryProvider,
   PersonalLibraryContext
@@ -16,15 +15,6 @@ import {
 
 import BookDrawerInfo from './BookDrawerInfo'
 import BookDrawer from './BookDrawer'
-
-const theme = createMuiTheme({
-  palette: {
-    primary: green,
-    secondary: lime,
-    contrastThreshold: 3,
-    tonalOffset: 0.2
-  }
-})
 
 const BookApp = () => {
   return (

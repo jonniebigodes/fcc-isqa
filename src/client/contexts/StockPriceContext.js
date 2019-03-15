@@ -37,45 +37,44 @@ export class StockPriceProvider extends Component {
         ]
       }))
     } else {
-      const {results}= this.state
-      const stockPresent= results.findIndex(x=>x.ticker===firstTicker)
-      if (stockPresent<0){
+      const {results} = this.state
+      const stockPresent = results.findIndex(x => x.ticker === firstTicker)
+      if (stockPresent < 0) {
         axios
-        .get(
-          `${
-            process.env.NODE_ENV !== 'production'
-              ? localEndPoint
-              : remoteEndPoint
-          }?stock=${firstTicker}${likedTicker ? '&like=true' : ''}`
-        )
-        .then(result => {
-          const {data} = result
-          const {stockData} = data
-          this.setState(prevstate => ({
-            results: [
-              ...prevstate.results,
-              {
-                id: uuid.v4(),
-                ticker: stockData.stock,
-                tickerPrice: stockData.price,
-                tickerLikes: stockData.likes
-              }
-            ]
-          }))
-        })
-        .catch(err => {
-          /* eslint-disable */
-          console.log('====================================')
-          console.log(`error fetching single:\n${err}`)
-          console.log('====================================')
-          /* eslint-enable */
-          this.setState({
-            stockError: true,
-            stockErrorMessage: 'Something went bad...really bad'
+          .get(
+            `${
+              process.env.NODE_ENV !== 'production'
+                ? localEndPoint
+                : remoteEndPoint
+            }?stock=${firstTicker}${likedTicker ? '&like=true' : ''}`
+          )
+          .then(result => {
+            const {data} = result
+            const {stockData} = data
+            this.setState(prevstate => ({
+              results: [
+                ...prevstate.results,
+                {
+                  id: uuid.v4(),
+                  ticker: stockData.stock,
+                  tickerPrice: stockData.price,
+                  tickerLikes: stockData.likes
+                }
+              ]
+            }))
           })
-        })
+          .catch(err => {
+            /* eslint-disable */
+            console.log('====================================')
+            console.log(`error fetching single:\n${err}`)
+            console.log('====================================')
+            /* eslint-enable */
+            this.setState({
+              stockError: true,
+              stockErrorMessage: 'Something went bad...really bad'
+            })
+          })
       }
-      
     }
   }
   // #endregion
@@ -112,50 +111,52 @@ export class StockPriceProvider extends Component {
         ]
       }))
     } else {
-      const {results}= this.state
-      const firstPresent= results.findIndex(x=>x.ticker===firstTicker)
-      const secondPresent= results.findIndex(x=>x.ticker===secondTicker)
-      
-      if (firstPresent<0 && secondPresent<0){
+      const {results} = this.state
+      const firstPresent = results.findIndex(x => x.ticker === firstTicker)
+      const secondPresent = results.findIndex(x => x.ticker === secondTicker)
+
+      if (firstPresent < 0 && secondPresent < 0) {
         axios
-        .get(
-          `${
-            process.env.NODE_ENV !== 'production'
-              ? localEndPoint
-              : remoteEndPoint
-          }?stock=${firstTicker}&stock=${secondTicker}${
-            likedTicker ? '&like=true' : ''
-          }`
-        )
-        .then(result => {
-          const {data} = result
-          const {stockData} = data
-          const dataresult = stockData.map(item => {
-            return {
-              id: uuid.v4(),
-              ticker: item.stock,
-              tickerPrice: item.price,
-              tickerLikes: item.likes
-            }
+          .get(
+            `${
+              process.env.NODE_ENV !== 'production'
+                ? localEndPoint
+                : remoteEndPoint
+            }?stock=${firstTicker}&stock=${secondTicker}${
+              likedTicker ? '&like=true' : ''
+            }`
+          )
+          .then(result => {
+            const {data} = result
+            const {stockData} = data
+            const dataresult = stockData.map(item => {
+              return {
+                id: uuid.v4(),
+                ticker: item.stock,
+                tickerPrice: item.price,
+                tickerLikes: item.likes
+              }
+            })
+            this.setState(prevstate => ({
+              results: [...prevstate.results, ...dataresult]
+            }))
           })
-          this.setState(prevstate => ({
-            results: [...prevstate.results, ...dataresult]
-          }))
-        })
-        .catch(err => {
-          /* eslint-disable */
-          console.log('====================================')
-          console.log(`error fetching multiple:\n${err}`)
-          console.log('====================================')
-          /* eslint-enable */
-          this.setState({
-            stockError: true,
-            stockErrorMessage: 'Something went bad...really bad'
+          .catch(err => {
+            /* eslint-disable */
+            console.log('====================================')
+            console.log(`error fetching multiple:\n${err}`)
+            console.log('====================================')
+            /* eslint-enable */
+            this.setState({
+              stockError: true,
+              stockErrorMessage: 'Something went bad...really bad'
+            })
           })
+      } else {
+        this.searchSingle({
+          firstTicker: firstPresent >= 0 ? secondTicker : firstTicker,
+          likedTicker: value.likedTicker
         })
-      }
-      else{
-        this.searchSingle({firstTicker:firstPresent>=0?secondTicker:firstTicker,likedTicker:value.likedTicker})
       }
     }
   }
@@ -179,8 +180,8 @@ export class StockPriceProvider extends Component {
   }
   // #endregion
 
-  cleanError=()=>{
-    this.setState({stockError:false,stockErrorMessage:''})
+  cleanError = () => {
+    this.setState({stockError: false, stockErrorMessage: ''})
   }
 
   render() {
@@ -190,7 +191,7 @@ export class StockPriceProvider extends Component {
         value={{
           ...this.state,
           search: this.searchStocks,
-          ErrorReset:this.cleanError
+          ErrorReset: this.cleanError
         }}>
         {children}
       </StockPriceContext.Provider>
